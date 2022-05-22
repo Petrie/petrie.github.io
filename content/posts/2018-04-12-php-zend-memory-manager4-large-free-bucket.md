@@ -5,6 +5,7 @@ tags:
   - c
 category: php
 date: 2018-04-12 18:22:53
+featured_image: '/images/php.png'
 ---
 
 
@@ -13,6 +14,7 @@ date: 2018-04-12 18:22:53
 ### 什么时候会向large_free_bucket存入内存块
 
 这里在复习下存入large_free_bucket流程。在调用emalloc申请能存，且在当前heap中没有找到合适内存块，emalloc函数会调用malloc向内核申请内存。向内核申请每次只能申请 heap->block_size倍数大小内存。所以内核申请到的  heap->block_size倍数 大小的内存并不会全部返回到emalloc调用者，而是有剩余。
+<!--more-->
 
 举个例子，假设heap->block_size=256k，如果emalloc调用者申请大小为250k时，emalloc内部会向内核申请256k大小的内存。所以会有6k的内存剩余，这6k的内存将会存入到**大内存区large_free_bucket**。
 
@@ -39,7 +41,6 @@ date: 2018-04-12 18:22:53
 上面第一列中是准备存入heap中的内存大小，第二列为其二进制。第三列为_zend_mm_alloc_int传入的内存大小。
 
 
-<!--more-->
 之前提过用gdb手动调用_zend_mm_alloc_int的方法，详情看一下前面的文章“[PHP内存管理ZMM（四）－GDB调试php源码并手动调用ZMM相关函数](http://petrie.github.io/2018/04/11/php-zend-gdb-call/)”。
 
 #### 存入第一个大小为600b的内存

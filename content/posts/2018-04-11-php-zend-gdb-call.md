@@ -6,6 +6,7 @@ tags:
   - gdb
 category: php
 date: 2018-04-11 18:22:53
+featured_image: '/images/php.png'
 ---
 
 
@@ -17,6 +18,7 @@ date: 2018-04-11 18:22:53
 #### 为什么要手动调用函数
 
 在阅读PHP ZMM源码的时候，有许多复杂的逻辑仅仅通过阅读源码很难理解，比如大内存large_free_buckets结构的构造。同构手动调用函数，可以方便的执行要申请的内存大小，从而测试构造large_free_buckets结构
+<!--more-->
 
 #### 编译安装PHP
 
@@ -25,7 +27,6 @@ date: 2018-04-11 18:22:53
 编译到目录:~/php5.6-disabledebug，注意不要开启debug选项
 
 #### GDB调试PHP
-<!--more-->
 ```shell
  gdb --args ~/php5.6-disabledebug/bin/php test.php 
 ```

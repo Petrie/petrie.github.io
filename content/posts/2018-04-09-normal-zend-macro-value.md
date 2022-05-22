@@ -5,6 +5,7 @@ tags:
   - C
 category: php
 date: 2018-04-09 14:22:25
+featured_image: '/images/php.png'
 ---
 
 #### 相关宏的定义
