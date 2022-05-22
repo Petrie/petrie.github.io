@@ -1,4 +1,4 @@
 baseURL = 'https://petrie.github.io/'
 languageCode = 'en-us'
-title = 'Petrie's Site'
+title = 'Petrie\'s Site'
 theme = "ananke"
