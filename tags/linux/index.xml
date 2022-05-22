@@ -19,7 +19,12 @@ arr=(1 2 3 4);for i in ${arr[@]};do echo $i;done;</description></item><item><tit
 Your system folder path does not appear to be set correctly. Please open the following file and correct this: index.php
 原因：CI框架 system,application 路径配置错误</description></item><item><title>Linux Svn Cmd</title><link>https://petrie.github.io/posts/2015-01-30-linux-svn-cmd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2015-01-30-linux-svn-cmd/</guid><description>svn diff [-r PREV] PATH 对比当前本地的工作拷贝文件(working copy)和任意版本A的差异
 svn diff -r94239 对比任意历史版本A和任意历史版本B的差异
-svn diff -r94239:94127</description></item><item><title>Linux下搭建Samba服务器</title><link>https://petrie.github.io/posts/2013-02-18-linux-samba/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2013-02-18-linux-samba/</guid><description>##Linux下搭建Samba服务器##
+svn diff -r94239:94127</description></item><item><title>Linux挂载ISO文件</title><link>https://petrie.github.io/posts/2012-09-18-linux-mount-iso/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-09-18-linux-mount-iso/</guid><description>Linux 下绑定ISO文件 在/mnt下创建/mnt/centos_iso文件夹
+mkdir /mnt/centos_iso
+将/home/cksamba/share/下的centos.iso挂在到/mnt/centos_iso文件夹下
+mount /home/cksamba/share/centos.iso /mnt/centos_iso -t iso9660 -o ro,loop=/dev/loop0
+或者
+mount /home/cksamba/share/centos.iso /mnt/centos_iso -o loop -t iso9660</description></item><item><title>Linux下搭建Samba服务器</title><link>https://petrie.github.io/posts/2013-02-18-linux-samba/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2013-02-18-linux-samba/</guid><description>##Linux下搭建Samba服务器##
 安装文件
 三种方式获取安装文件
 1. 网络下载
@@ -32,12 +37,7 @@ svn diff -r94239:94127</description></item><item><title>Linux下搭建Samba服�
 采用RPM方式安装。
 rpm -ivh samba_版本信息.rpm
 配置Samba
-配置文件位置: /etc/samba/smb.conf</description></item><item><title>Linux挂载ISO文件</title><link>https://petrie.github.io/posts/2012-09-18-linux-mount-iso/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-09-18-linux-mount-iso/</guid><description>Linux 下绑定ISO文件 在/mnt下创建/mnt/centos_iso文件夹
-mkdir /mnt/centos_iso
-将/home/cksamba/share/下的centos.iso挂在到/mnt/centos_iso文件夹下
-mount /home/cksamba/share/centos.iso /mnt/centos_iso -t iso9660 -o ro,loop=/dev/loop0
-或者
-mount /home/cksamba/share/centos.iso /mnt/centos_iso -o loop -t iso9660</description></item><item><title>LNMP环境搭建（一）安装前准备</title><link>https://petrie.github.io/posts/2012-10-23-lnmp-first-prepare/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-10-23-lnmp-first-prepare/</guid><description>博客后续将退出LNMP环境搭建系列博文：
+配置文件位置: /etc/samba/smb.conf</description></item><item><title>LNMP环境搭建（一）安装前准备</title><link>https://petrie.github.io/posts/2012-10-23-lnmp-first-prepare/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-10-23-lnmp-first-prepare/</guid><description>博客后续将退出LNMP环境搭建系列博文：
 安装依赖库： yum -y install gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5 krb5-devel libidn libidn-devel openssl openssl-devel openldap openldap-devel nss_ldap openldap-clients openldap-servers
 以上命令在连网下才能进行，如果不能联网需要配置本地yum源，配置方法请点击我以前的文章点击
 下载安装所需的源码包： PHP相关程序包 php源码包：点击 php依赖的libmcrypt加密库：点击 php依赖的mcrypt加密库：点击 php依赖的编码转换库：点击 php依赖的mhash库：点击 memcache源码包：点击 eaccelerator源码包：点击 PDO_MYSQL源码包：点击 ImageMagick源码包：点击 imagick源码包：点击 Nginx 相关程序包 Nginx源码包：点击 MySQL相关程序包 MySQL源码包：点击 本文旨在在张宴博客的基础上，使得安装过程更加清晰易懂，更加适合新手。</description></item><item><title>Tar in Linux</title><link>https://petrie.github.io/posts/2012-10-19-linux-tar/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-10-19-linux-tar/</guid><description>将当前文件夹下的所有以.jpg为后缀的文件打包到all.tar.gz 压缩包内:
