@@ -3,7 +3,7 @@ title: PHP内存管理ZMM（五）－大内存区large_free_bucket的存入
 tags:
   - php
   - c
-category: php
+categories: [php]
 date: 2018-04-12 18:22:53
 featured_image: '/images/php.png'
 ---
