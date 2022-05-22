@@ -2,3 +2,4 @@ baseURL = 'https://petrie.github.io/'
 languageCode = 'zh-cn'
 title = "Petrie's Site"
 theme = "ananke"
+disqusShortname = "petrieliu"
