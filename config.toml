@@ -4,3 +4,17 @@ title = "Petrie's Site"
 theme = "ananke"
 disqusShortname = "petrie"
 googleAnalytics = "G-T6WSQ8M692"
+DefaultContentLanguage = "zh"
+SectionPagesMenu = "main"
+Paginate = 9
+
+[taxonomies]
+    tag = "tags"
+    category = "categories"
+
+[params]
+    date_format = "2006 January 2日"
+
+[[params.ananke_socials]]
+    name = "github"
+    url = "https://github.com/petrie"
