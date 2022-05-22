@@ -1,0 +1,68 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>PHP扩展开发－自动生成扩展骨架 | My New Hugo Site</title><meta name=viewport content="width=device-width,minimum-scale=1"><meta name=description content="PHP扩展编译有两种方式
+
+作为一个可装载模块或者DSO（动态共享对象）
+静态编译到PHP
+
+静态编译的方式直接和PHP编译到一起，步骤比较简单，但每次变更代码都要编译这个PHP代码，非常耗时，所以这里采用第二种方式
+开发环境
+本文脚本命令仅在以下环境测试成功
+操作系统：CentOS 6.9
+PHP版本：PHP-7.1
+安装开发工具包
+yum groupinstall -y 'Development Tools'
+"><meta name=generator content="Hugo 0.99.1"><meta name=robots content="noindex, nofollow"><link rel=stylesheet href=/ananke/css/main.min.css><meta property="og:title" content="PHP扩展开发－自动生成扩展骨架"><meta property="og:description" content="PHP扩展编译有两种方式
+
+作为一个可装载模块或者DSO（动态共享对象）
+静态编译到PHP
+
+静态编译的方式直接和PHP编译到一起，步骤比较简单，但每次变更代码都要编译这个PHP代码，非常耗时，所以这里采用第二种方式
+开发环境
+本文脚本命令仅在以下环境测试成功
+操作系统：CentOS 6.9
+PHP版本：PHP-7.1
+安装开发工具包
+yum groupinstall -y 'Development Tools'
+"><meta property="og:type" content="article"><meta property="og:url" content="https://petrie.github.io/posts/2018-03-29-first-php-extension/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2018-03-29T03:55:12+00:00"><meta property="article:modified_time" content="2018-03-29T03:55:12+00:00"><meta itemprop=name content="PHP扩展开发－自动生成扩展骨架"><meta itemprop=description content="PHP扩展编译有两种方式
+
+作为一个可装载模块或者DSO（动态共享对象）
+静态编译到PHP
+
+静态编译的方式直接和PHP编译到一起，步骤比较简单，但每次变更代码都要编译这个PHP代码，非常耗时，所以这里采用第二种方式
+开发环境
+本文脚本命令仅在以下环境测试成功
+操作系统：CentOS 6.9
+PHP版本：PHP-7.1
+安装开发工具包
+yum groupinstall -y 'Development Tools'
+"><meta itemprop=datePublished content="2018-03-29T03:55:12+00:00"><meta itemprop=dateModified content="2018-03-29T03:55:12+00:00"><meta itemprop=wordCount content="86"><meta itemprop=keywords content="php,php-extension,"><meta name=twitter:card content="summary"><meta name=twitter:title content="PHP扩展开发－自动生成扩展骨架"><meta name=twitter:description content="PHP扩展编译有两种方式
+
+作为一个可装载模块或者DSO（动态共享对象）
+静态编译到PHP
+
+静态编译的方式直接和PHP编译到一起，步骤比较简单，但每次变更代码都要编译这个PHP代码，非常耗时，所以这里采用第二种方式
+开发环境
+本文脚本命令仅在以下环境测试成功
+操作系统：CentOS 6.9
+PHP版本：PHP-7.1
+安装开发工具包
+yum groupinstall -y 'Development Tools'
+"></head><body class="ma0 avenir bg-near-white"><header><div class=bg-black><nav class="pv3 ph3 ph4-ns" role=navigation><div class="flex-l justify-between items-center center"><a href=/ class="f3 fw2 hover-white no-underline white-90 dib">My New Hugo Site</a><div class="flex-l items-center"><div class=ananke-socials></div></div></div></nav></div></header><main class=pb7 role=main><article class="flex-l flex-wrap justify-between mw8 center ph3"><header class="mt4 w-100"><aside class="instapaper_ignoref b helvetica tracked">POSTS</aside><div id=sharing class="mt3 ananke-socials"></div><h1 class="f1 athelas mt3 mb1">PHP扩展开发－自动生成扩展骨架</h1><time class="f6 mv4 dib tracked" datetime=2018-03-29T03:55:12Z>March 29, 2018</time></header><div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>PHP扩展编译有两种方式</p><ul><li>作为一个可装载模块或者DSO（动态共享对象）</li><li>静态编译到PHP</li></ul><p>静态编译的方式直接和PHP编译到一起，步骤比较简单，但每次变更代码都要编译这个PHP代码，非常耗时，所以这里采用第二种方式</p><h4 id=开发环境>开发环境</h4><p>本文脚本命令仅在以下环境测试成功</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>操作系统：CentOS 6.9
+</span></span><span style=display:flex><span>PHP版本：PHP-7.1
+</span></span></code></pre></div><h4 id=安装开发工具包>安装开发工具包</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>yum groupinstall -y <span style=color:#e6db74>&#39;Development Tools&#39;</span>
+</span></span></code></pre></div><h4 id=下载php源码>下载PHP源码</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>git clone http://git.php.net/repository/php-src.git
+</span></span><span style=display:flex><span>git checkout PHP-7.1
+</span></span></code></pre></div><h4 id=安装依赖>安装依赖</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>sudo yum install  libxml2-devel
+</span></span></code></pre></div><h4 id=编译安装php>编译安装php####</h4><p>安装到~/php7.1目录下，以免覆盖系统已安装的PHP</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>./buildconf
+</span></span><span style=display:flex><span>./configure --prefix<span style=color:#f92672>=</span>$HOME/php7.1 --enable-debug --enable-maintainer-zts
+</span></span><span style=display:flex><span>make <span style=color:#f92672>&amp;&amp;</span> make install
+</span></span></code></pre></div><h4 id=生成扩展框架>生成扩展框架</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>cd $HOME/php-src/ext
+</span></span><span style=display:flex><span>$HOME/php-src/ext/ext_skel --extname<span style=color:#f92672>=</span>testex
+</span></span></code></pre></div><h4 id=编辑configm4>编辑<code>config.m4</code></h4><p>去掉<code>config.m4</code>文件中第16、18行前的dnl注释</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span> <span style=color:#ae81ff>16</span> PHP_ARG_ENABLE<span style=color:#f92672>(</span>testex, whether to enable testex support,
+</span></span><span style=display:flex><span> <span style=color:#ae81ff>17</span> dnl Make sure that the comment is aligned:
+</span></span><span style=display:flex><span> <span style=color:#ae81ff>18</span> <span style=color:#f92672>[</span>  --enable-testex           Enable testex support<span style=color:#f92672>])</span>
+</span></span></code></pre></div><h4 id=编译扩展>编译扩展</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>cd $HOME/php-src/ext/testex
+</span></span><span style=display:flex><span>$HOME/php7.1/bin/phpize
+</span></span><span style=display:flex><span>./configure --with-php-config<span style=color:#f92672>=</span>$HOME/php7.1/bin/php-config
+</span></span><span style=display:flex><span>make <span style=color:#f92672>&amp;&amp;</span> make install
+</span></span></code></pre></div><h4 id=测试扩展>测试扩展</h4><p>ext_skel脚本生成的扩展已包含confirm_testex_compiled函数，所以我们用它坐测试</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$HOME/php7.1/bin/php -dextension<span style=color:#f92672>=</span>$HOME/php7.1/lib/php/extensions/debug-zts-20160303/testex.so -r <span style=color:#e6db74>&#34;echo confirm_testex_compiled(&#39;1&#39;);&#34;</span>
+</span></span></code></pre></div><h4 id=总结>总结</h4><p>本文只是用php源码自带的ext_skel生成扩展框架，测试编译和安装。扩展不包含任何功能。如果想加入更多功能，可以参考http://www.phpinternalsbook.com/</p><ul class=pa0><li class="list di"><a href=/tags/php class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">php</a></li><li class="list di"><a href=/tags/php-extension class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">php-extension</a></li></ul><div class="mt6 instapaper_ignoref"></div></div><aside class="w-30-l mt6-l"><div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links"><p class="f5 b mb3">Related</p><ul class="pa0 list"><li class=mb2><a href=/posts/2018-03-21-laravel-ioc/>如何独立的使用Laravel的IOC功能</a></li><li class=mb2><a href=/posts/2017-06-04-php-mysql-timeout/>PHP设置连接mysql超时时间</a></li><li class=mb2><a href=/posts/2017-04-10-mac-php-version/>更新Mac的PHP默认版本</a></li><li class=mb2><a href=/posts/2016-06-28-nignx-php%E4%B8%ADhttp%E8%AF%B7%E6%B1%82%E8%BF%94%E5%9B%9E502/>Nignx+PHP中HTTP请求返回502</a></li><li class=mb2><a href=/posts/2015-03-05-ci-config/>CI 环境配置</a></li></ul></div></aside></article></main><footer class="bg-black bottom-0 w-100 pa3" role=contentinfo><div class="flex justify-between"><a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href=https://petrie.github.io/>&copy; My New Hugo Site 2022</a><div><div class=ananke-socials></div></div></div></footer></body></html>

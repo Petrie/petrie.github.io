@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>gdb on My New Hugo Site</title><link>https://petrie.github.io/tags/gdb/</link><description>Recent content in gdb on My New Hugo Site</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 11 Apr 2018 18:22:53 +0000</lastBuildDate><atom:link href="https://petrie.github.io/tags/gdb/index.xml" rel="self" type="application/rss+xml"/><item><title>PHP内存管理ZMM（四）－GDB调试php源码并手动调用ZMM相关函数</title><link>https://petrie.github.io/posts/2018-04-11-php-zend-gdb-call/</link><pubDate>Wed, 11 Apr 2018 18:22:53 +0000</pubDate><guid>https://petrie.github.io/posts/2018-04-11-php-zend-gdb-call/</guid><description>&lt;p>本章讲介绍gdb调试php，并手动调用ZMM中申请内存和查找大内存块的函数&lt;/p>
+&lt;ul>
+&lt;li>_zend_mm_alloc_int&lt;/li>
+&lt;li>zend_mm_search_large_block&lt;/li>
+&lt;/ul>
+&lt;h4 id="为什么要手动调用函数">为什么要手动调用函数&lt;/h4>
+&lt;p>在阅读PHP ZMM源码的时候，有许多复杂的逻辑仅仅通过阅读源码很难理解，比如大内存large_free_buckets结构的构造。同构手动调用函数，可以方便的执行要申请的内存大小，从而测试构造large_free_buckets结构&lt;/p>
+&lt;h4 id="编译安装php">编译安装PHP&lt;/h4>
+&lt;p>从github上下载php源码&lt;/p>
+&lt;p>编译到目录:~/php5.6-disabledebug，注意不要开启debug选项&lt;/p>
+&lt;h4 id="gdb调试php">GDB调试PHP&lt;/h4></description></item></channel></rss>

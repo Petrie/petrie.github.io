@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>LNMP on My New Hugo Site</title><link>https://petrie.github.io/tags/lnmp/</link><description>Recent content in LNMP on My New Hugo Site</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://petrie.github.io/tags/lnmp/index.xml" rel="self" type="application/rss+xml"/><item><title>LNMP环境搭建（二） 编译安装MySQL</title><link>https://petrie.github.io/posts/2012-10-25-lnmp-second-mysql/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-10-25-lnmp-second-mysql/</guid><description>编译安装MySQL
+1. 创建组和用户
+groupadd Mysql
+useradd -g Mysql Mysql
+2. 解压源码包并进入
+tar zxvf Mysql-5.5.3-m3.tar.gz
+cd Mysql-5.5.3-m3
+3. 配置cmake编译参数
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/Mysql \
+-DSYSCONFDIR=/usr/local/Mysql/etc \
+-DMYSQL_DATADIR=/usr/local/Mysql/data \
+-DMYSQL_TCP_PORT=3306 \
+-DMYSQL_UNIX_ADDR=/tmp/Mysqld.sock \
+-DMYSQL_USER=Mysql \
+-DEXTRA_CHARSETS=all \
+-DWITH_READLINE=1 \
+-DWITH_SSL=system \
+-DWITH_EMBEDDED_SERVER=1 \
+-DENABLED_LOCAL_INFILE=1 \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DWITHOUT_PARTITION_STORAGE_ENGINE=2
+4. 编译安装
+make &amp;amp;&amp;amp; make install
+5. 将安装目录极其子目录的所属组和拥有者设置为Mysql:Mysql
+chown -R Mysql:Mysql /usr/local/Mysql
+cd ..
+6. 以Mysql用户帐号的身份建立数据表</description></item></channel></rss>

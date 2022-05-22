@@ -1,0 +1,119 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Linux | My New Hugo Site</title><meta name=viewport content="width=device-width,minimum-scale=1"><meta name=description content><meta name=generator content="Hugo 0.99.1"><meta name=robots content="noindex, nofollow"><link rel=stylesheet href=/ananke/css/main.min.css><link href=/tags/linux/index.xml rel=alternate type=application/rss+xml title="My New Hugo Site"><link href=/tags/linux/index.xml rel=feed type=application/rss+xml title="My New Hugo Site"><meta property="og:title" content="Linux"><meta property="og:description" content><meta property="og:type" content="website"><meta property="og:url" content="https://petrie.github.io/tags/linux/"><meta itemprop=name content="Linux"><meta itemprop=description content><meta name=twitter:card content="summary"><meta name=twitter:title content="Linux"><meta name=twitter:description content></head><body class="ma0 avenir bg-near-white"><header><div class="pb3-m pb6-l bg-black"><nav class="pv3 ph3 ph4-ns" role=navigation><div class="flex-l justify-between items-center center"><a href=/ class="f3 fw2 hover-white no-underline white-90 dib">My New Hugo Site</a><div class="flex-l items-center"><div class=ananke-socials></div></div></div></nav><div class="tc-l pv3 ph3 ph4-ns"><h1 class="f2 f-subheadline-l fw2 light-silver mb0 lh-title">Linux</h1></div></div></header><main class=pb7 role=main><article class="cf pa3 pa4-m pa4-l"><div class="measure-wide-l center f4 lh-copy nested-copy-line-height nested-links mid-gray"><p>Below you will find pages that utilize the taxonomy term “Linux”</p></div></article><div class="mw8 center"><section class="flex-ns flex-wrap justify-around mt5"><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2016-09-26-%E5%A6%82%E4%BD%95%E5%B0%86linux%E5%91%BD%E4%BB%A4%E7%9A%84%E7%BB%93%E6%9E%9C%E4%BD%9C%E4%B8%BA%E4%B8%8B%E4%B8%80%E4%B8%AA%E5%91%BD%E4%BB%A4%E7%9A%84%E5%8F%82%E6%95%B0/ class="link black dim">如何将Linux命令的结果作为下一个命令的参数</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">一、反引号 &lsquo;`&rsquo; echo `date`
+二、$() echo $(date)
+三、find exec参数 四、xargs find ./ | xarges ls -l</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2016-06-29-mac%E4%B8%8B-bashrc%E4%B8%8D%E7%94%9F%E6%95%88/ class="link black dim">Mac下“.bashrc”不生效</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">新建"~/.bash_profile"，写入下面代码：
+if [ "${BASH-no}" != "no" ]; then [ -r ~/.bashrc ] && . ~/.bashrc fi 原因是执行.bashrc需要执行login shell， 而Mac启动时不会执行login shell，打开terminal也不会执行login shell</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2016-06-29-kafka-server%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/ class="link black dim">Kafka server安装教程</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">下载解压 下载地址： https://www.apache.org/dyn/closer.cgi?path=/kafka/0.10.0.0/kafka_2.11-0.10.0.0.tgz
+> tar -xzf kafka_2.11-0.10.0.0.tgz > cd kafka_2.11-0.10.0.0 启动Kafka服务 Kafka服务需要安装ZooKeeper。如果没有你可以使用kafka附带的临时脚本来启动ZooKeeper
+#启动ZooKeeper > bin/zookeeper-server-start.sh config/zookeeper.properties [2013-04-22 15:01:37,495] INFO Reading configuration from: config/zookeeper.properties (org.apache.zookeeper.server.quorum.QuorumPeerConfig) ... #启动kafka > bin/kafka-server-start.sh config/server.properties [2013-04-22 15:01:47,028] INFO Verifying properties (kafka.utils.VerifiableProperties) [2013-04-22 15:01:47,051] INFO Property socket.send.buffer.bytes is overridden to 1048576 (kafka.utils.VerifiableProperties) ... 创建测试Topic Let&rsquo;s create a topic named &ldquo;test&rdquo; with a single partition and only one replica:
+> bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test We can now see that topic if we run the list topic command:</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2016-06-28-curl%E8%B0%83%E7%94%A8%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E6%8E%A5%E5%8F%A3/ class="link black dim">curl调用上传文件接口</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">一般场景下，使用curl模拟get，post请求。 今天的manpage是模拟上传文件请求
+-F 参数执行文件路径和其他参数 -H 自定义 Host
+curl -F "file=@/home/petrie/illegal_driver02.txt;name=file" "http://127.0.0.1:8000/biz/driver_mis/driver/uploadcsv" -H mis.petrie.com.cn</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2016-06-23-shell-for/ class="link black dim">shell命令行for语句</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">很久就想写一篇关于shell的for语法的博客了。预谋了很久，今天终于提笔 核心语法
+for i in `ls`;do echo $i;done; 常见场景：
+查询一组host对应的IP
+for计数和shell的四则运算
+for((i=1;i&lt;=10;i++));do echo $(expr $i \* 4);done for计数2
+for i in $(seq 10) for循环命令执行结果
+for i in `ls` 或者
+for i in $(ls) for循环数组变量
+arr=(1 2 3 4);for i in ${arr[@]};do echo $i;done;</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2015-03-05-ci-config/ class="link black dim">CI 环境配置</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">502 bad getway
+原因：php-cgi 没启动
+Your system folder path does not appear to be set correctly. Please open the following file and correct this: index.php
+原因：CI框架 system,application 路径配置错误</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2015-01-30-linux-svn-cmd/ class="link black dim">Linux Svn Cmd</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">svn diff [-r PREV] PATH 对比当前本地的工作拷贝文件(working copy)和任意版本A的差异
+svn diff -r94239 对比任意历史版本A和任意历史版本B的差异
+svn diff -r94239:94127</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2013-02-18-linux-samba/ class="link black dim">Linux下搭建Samba服务器</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">##Linux下搭建Samba服务器##
+安装文件
+三种方式获取安装文件
+1. 网络下载
+在http://rpmfind.net搜索"samba",下载对应rpm文件
+2. 安装光盘
+通过mount绑定到系统，然后拷贝使用详见
+3. iso文件
+通过mount绑定到系统，然后拷贝使用详见
+安装命令
+采用RPM方式安装。
+rpm -ivh samba_版本信息.rpm
+配置Samba
+配置文件位置: /etc/samba/smb.conf</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2012-09-18-linux-mount-iso/ class="link black dim">Linux挂载ISO文件</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">Linux 下绑定ISO文件 在/mnt下创建/mnt/centos_iso文件夹
+mkdir /mnt/centos_iso
+将/home/cksamba/share/下的centos.iso挂在到/mnt/centos_iso文件夹下
+mount /home/cksamba/share/centos.iso /mnt/centos_iso -t iso9660 -o ro,loop=/dev/loop0
+或者
+mount /home/cksamba/share/centos.iso /mnt/centos_iso -o loop -t iso9660</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2012-10-23-lnmp-first-prepare/ class="link black dim">LNMP环境搭建（一）安装前准备</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">博客后续将退出LNMP环境搭建系列博文：
+安装依赖库： yum -y install gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5 krb5-devel libidn libidn-devel openssl openssl-devel openldap openldap-devel nss_ldap openldap-clients openldap-servers
+以上命令在连网下才能进行，如果不能联网需要配置本地yum源，配置方法请点击我以前的文章点击
+下载安装所需的源码包： PHP相关程序包 php源码包：点击 php依赖的libmcrypt加密库：点击 php依赖的mcrypt加密库：点击 php依赖的编码转换库：点击 php依赖的mhash库：点击 memcache源码包：点击 eaccelerator源码包：点击 PDO_MYSQL源码包：点击 ImageMagick源码包：点击 imagick源码包：点击 Nginx 相关程序包 Nginx源码包：点击 MySQL相关程序包 MySQL源码包：点击 本文旨在在张宴博客的基础上，使得安装过程更加清晰易懂，更加适合新手。</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2012-10-19-linux-tar/ class="link black dim">Tar in Linux</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">将当前文件夹下的所有以.jpg为后缀的文件打包到all.tar.gz 压缩包内:
+tar -czvf all.tar.gz * .jpg
+将压缩文件all.tar.gz解压到文件夹dir下:
+tar -xzvf all.tar.gz -C dir</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2015-03-25-my-vim-plugin/ class="link black dim">VIM 插件</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">NERDTree
+neocomplcache</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2014-03-06-vim-copy-mv-delete/ class="link black dim">Vim快速选中、删除、复制引号或括号中的内容</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">http://www.Linuxsong.org/2010/09/vim-quick-select-copy-delete/</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2012-09-18-linux-yum-iso/ class="link black dim">利用CentOS.ISO配置本地yum源</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">#扯淡# 公司的网络要用代理，许多非常cool的东西都玩不了，真垃圾。
+组长让搞一个LNMP的教程。
+上次在开发机上乱搞，把LNMP搞乱了，程序不能运行，调了好久，最后只好请来别的组的一位大神才解决。谁让自己是LNMP菜鸟呢!组里也都是做.Net的
+从此我就不敢再在开发机上乱弄了。 （这事才几天，缓缓再说）。
+开发联网上网不用通过代理，用起来爽啊，装点啥直接yum。
+这几天还得把LNMP教程弄出来。
+用不了开发机，只能在本机折腾了，先装Mysql，源码安装要用到cmake，不能用yum（不能上网），自己找依赖吧。
+本想依赖最多有1，2层吧，可是事实不是这样，各种深度，各种广度啊。果断改变策略。想起以前在uplooking学Linux的时候老师曾教过本地yum配置。所幸试一试。
+废话了这么多终于要进入正题了&mldr;
+#正题# 1.将下好的dvdiso复制到虚拟机的 /home/petrie/ 下并重命名为centos.iso。此时iso的目录为/home/petrie/centos.iso
+2.将dvdiso文件绑定到目录/mnt/centos_iso
+mkdir /mnt/centos_iso
+mount -o loop /home/petrie/centos.iso /mnt/centos_iso
+好了，现在光盘中的rpm都可以用来安装了，但是这能安装那些没有依赖的，有依赖的要自行处理，接下来要安装的东西后面会用到，十分幸运，她没有依赖
+3.安装配置软件
+cd /mnt/centos_iso/CentOS
+rpm -ivh createrepo-0.4.11-3.el5.noarch.rpm
+4.运行createrepo
+cd /mnt
+createrepo ./ 这个过程挺长的2，3分钟吧
+5.修改配置
+cd /etc/yum.repos.d/
+vim dvdiso.repo
+在dvdiso.repo中写入以下内容：
+[DVDISO]
+name=DVD ISO
+baseurl=file:///mnt/
+enabled=1
+gpgcheck=0
+注意：步骤5 需要将/etc/yum.repos.d/下的文件清空，也就是说/etc/yum.repos.d/下只能有dvdiso.repo文件
+这就好了，执行 yum clean all;yum list,执行成功则说明配置成功了。 赶紧装个软件试试吧~ pretty cool！ huh~</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2012-09-19-useful-vim-1/ class="link black dim">易忘vim命令1</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">%: **[括号匹配]**可以让光标从它当前所在的括号跳转到与它相匹配的括号上去 n+空格键 ： 那个n表示【数字】，例如20。按下数字后在按空格键盘，光标会向有一栋这一行的n个字符。例如20+空格 则光标会向后面移动20个字符距离。
+0：移动到这一行的最前面字符处
+$：移动到这一行的最后面字符处
+H：光标移动到这个屏幕最上方那一行的第一个字符
+M：光标移动到这个屏幕的中央那一行的第一个字符
+L：光标移动到这个屏幕的最下方那一行的第一个字符__
+G：移动到这个文档的最后一行。
+n+回车键 ：n为数字。光标向下移动n行(常用)
+？word：向光标之上寻找一个字符串名称为word的字符串。
+：n1,n2s/word1/word2/g：n1与n2为数字。在第n1与n2行之间寻找word1这个字符串，并将该字符串取代为word2！举例来说，在100到200行之间搜索vbird并取代为VBIRD则：[:100,200s/vbrid/VBIRD/g]
+1,$s/word1/word2/g：从第一行到最后一行寻找word1字符串，并替换
+1,$s/word1/word2/gc :需要确认的替换。
+删除、复制与黏贴 nx：n为数字，连续向后删除n个字符。举例来说，我要连续删除10个字符【10x】。
+ndd：n为数字。删除光标所在的向下n列，例如20dd则是删除20列。
+d1G：删除光标所在到第一行的所有数据。
+dG：删除光标所在到最后一行的数据 d$：删除游标所在处，到该行的最后一个字符
+d0：删除游标所在处到行首的字符
+nyy，y1G，yG，y0，y$参考上文。
+p,P：p为将已复制的数据在光标下一行贴上，P则为贴在游标上一行！
+J：将光标所在列与下一列的数据结合成同一列。
+**c：重复删除多个数据，例如向下删除10行【10cj】**
+u：重复前一个动作。（常用）
+Ctrl+r：重做上一个动作。（常用）
+.：重复前一个动作，如果你想要重复删除，重复贴上等等动作。</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2012-09-19-useful-vim-2/ class="link black dim">易忘vim命令2</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">ZZ：这是大写的Z，若档案没有改动，则不储存离开，若档案已经被更动过，则存储后离开！
+：w [filename] 将编辑的数据储存成另一个档案
+：r [filename] 在编辑数据中，读入另一个档案的数据。
+：n1，n2 w [filename] 将n1到n2的内容储存成filename这个档案
+：!command 暂时离开vi到指令模式下执行command的显示结果！例如[:!ls /home]即可在vi当中查看/home底下以ls输出的档案信息。
+##区块选择## v：字符选择，会将光标经过的地方反白选择！
+V：行选择，会将光标经过的行反白选择！
+Ctrl+v：区块选择，可用长方形的方式选择资料
+y： 将反白的地方复制起来
+d： 将反白的地方删除掉
+##多档案编辑##
+：n 编辑下一个档案
+：N 编辑上一个档案
+：files 列出目前这个vim开启的所有档案
+##多窗口功能##
+：sp /etc/hosts 在分割窗口中打开新文件
+ctrl+w+↑/j及ctrl+w+↓/j 在窗口之间移动：按键的按法是：先按下ctrl不放，再按下w后放开所有的按键，然后在按下j或向下箭头，则光标可移动到下方的窗口。
+ctrl+w+q：关闭下方的窗口
+##vim环境设定与记录：~/.vimrc,~/viminfo##
+：set hlsearch ：set nohlseach 设置搜索反白 ：set autoindent ：set noautoindent 是否自动缩排 ：set backup 是否自动储存备份档 ：set all 显示目前所有环境参数设定值。</div></div></div></div></section></div></main><footer class="bg-black bottom-0 w-100 pa3" role=contentinfo><div class="flex justify-between"><a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href=https://petrie.github.io/>&copy; My New Hugo Site 2022</a><div><div class=ananke-socials></div></div></div></footer></body></html>

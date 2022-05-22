@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on My New Hugo Site</title><link>https://petrie.github.io/posts/</link><description>Recent content in Posts on My New Hugo Site</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 12 Apr 2018 18:22:53 +0000</lastBuildDate><atom:link href="https://petrie.github.io/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>PHP内存管理ZMM（五）－大内存区large_free_bucket的存入</title><link>https://petrie.github.io/posts/2018-04-12-php-zend-memory-manager4-large-free-bucket/</link><pubDate>Thu, 12 Apr 2018 18:22:53 +0000</pubDate><guid>https://petrie.github.io/posts/2018-04-12-php-zend-memory-manager4-large-free-bucket/</guid><description>&lt;p>之前的章节中介绍过large_free_bucket的存入条件。这一篇将介绍large_free_bucket的主要结构包括其中的链表结构和树结构和存入取出流程。本章讲通过图示大内存区域内存分部情况。&lt;/p>
+&lt;h3 id="什么时候会向large_free_bucket存入内存块">什么时候会向large_free_bucket存入内存块&lt;/h3>
+&lt;p>这里在复习下存入large_free_bucket流程。在调用emalloc申请能存，且在当前heap中没有找到合适内存块，emalloc函数会调用malloc向内核申请内存。向内核申请每次只能申请 heap-&amp;gt;block_size倍数大小内存。所以内核申请到的 heap-&amp;gt;block_size倍数 大小的内存并不会全部返回到emalloc调用者，而是有剩余。&lt;/p>
+&lt;p>举个例子，假设heap-&amp;gt;block_size=256k，如果emalloc调用者申请大小为250k时，emalloc内部会向内核申请256k大小的内存。所以会有6k的内存剩余，这6k的内存将会存入到&lt;strong>大内存区large_free_bucket&lt;/strong>。&lt;/p>
+&lt;p>另外一个例子，假设heap-&amp;gt;block_size=256k，如果emalloc调用者申请大小为260k（大于256k）时，emalloc会申请256*2=512k大小的内存，此时会有512k－260k＝252k的内存剩余。此时剩下的252k内存会存入到&lt;strong>剩余内存区rest_bucket&lt;/strong>。&lt;/p>
+&lt;h3 id="手动构建large_free_bucket结构">手动构建large_free_bucket结构&lt;/h3>
+&lt;h4 id="large_free_bucket结构举例">large_free_bucket结构举例&lt;/h4>
+&lt;p>现在假设有以下内存块在large_free_bucket，分别为：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">大小&lt;/span> &lt;span style="color:#960050;background-color:#1e0010">二进制&lt;/span> alloc_size
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">600&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0010&lt;/span> &lt;span style="color:#ae81ff">0101&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">600&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261496&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">704&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0010&lt;/span> &lt;span style="color:#ae81ff">1100&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">704&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261392&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">800&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0011&lt;/span> &lt;span style="color:#ae81ff">0010&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">800&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261296&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">904&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0011&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">904&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261192&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0011&lt;/span> &lt;span style="color:#ae81ff">1110&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1000&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261096&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">600&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0010&lt;/span> &lt;span style="color:#ae81ff">0101&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">600&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261496&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">704&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0010&lt;/span> &lt;span style="color:#ae81ff">1100&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">704&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261392&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>上面第一列中是准备存入heap中的内存大小，第二列为其二进制。第三列为_zend_mm_alloc_int传入的内存大小。&lt;/p></description></item><item><title>PHP内存管理ZMM（四）－GDB调试php源码并手动调用ZMM相关函数</title><link>https://petrie.github.io/posts/2018-04-11-php-zend-gdb-call/</link><pubDate>Wed, 11 Apr 2018 18:22:53 +0000</pubDate><guid>https://petrie.github.io/posts/2018-04-11-php-zend-gdb-call/</guid><description>&lt;p>本章讲介绍gdb调试php，并手动调用ZMM中申请内存和查找大内存块的函数&lt;/p>
+&lt;ul>
+&lt;li>_zend_mm_alloc_int&lt;/li>
+&lt;li>zend_mm_search_large_block&lt;/li>
+&lt;/ul>
+&lt;h4 id="为什么要手动调用函数">为什么要手动调用函数&lt;/h4>
+&lt;p>在阅读PHP ZMM源码的时候，有许多复杂的逻辑仅仅通过阅读源码很难理解，比如大内存large_free_buckets结构的构造。同构手动调用函数，可以方便的执行要申请的内存大小，从而测试构造large_free_buckets结构&lt;/p>
+&lt;h4 id="编译安装php">编译安装PHP&lt;/h4>
+&lt;p>从github上下载php源码&lt;/p>
+&lt;p>编译到目录:~/php5.6-disabledebug，注意不要开启debug选项&lt;/p>
+&lt;h4 id="gdb调试php">GDB调试PHP&lt;/h4></description></item><item><title>PHP内存管理ZMM（三）－内存分配函数emalloc</title><link>https://petrie.github.io/posts/2018-04-09-php-zend-memory-manager-2/</link><pubDate>Wed, 11 Apr 2018 10:22:53 +0000</pubDate><guid>https://petrie.github.io/posts/2018-04-09-php-zend-memory-manager-2/</guid><description>&lt;h4 id="主流程">主流程&lt;/h4>
+&lt;p>emalloc是ZMM中heap层实现的函数，其内部调用_zend_mm_alloc_int函数。在_zend_mm_alloc_int中会依次在heap层的缓存区、小内存区、大内存区、剩余内存区寻找合适的内存。如果在这四个区域中都为查找到合适的内存，则调用malloc向内核申请，在向内核申请内存时，申请的大小必须是segment_size(256k)的整数倍，最小为256k。以下用流程图展示&lt;/p></description></item><item><title>PHP内存管理ZMM（二）－常见宏的值</title><link>https://petrie.github.io/posts/2018-04-09-normal-zend-macro-value/</link><pubDate>Mon, 09 Apr 2018 14:22:25 +0000</pubDate><guid>https://petrie.github.io/posts/2018-04-09-normal-zend-macro-value/</guid><description>&lt;h4 id="相关宏的定义">相关宏的定义&lt;/h4>
+&lt;p>64位系统非debug模式编译后的&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_ALIGNMENT 8
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_ALIGNMENT_LOG2 3
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_MIN_SIZE ((ZEND_MM_ALIGNED_MIN_HEADER_SIZE&amp;gt;(ZEND_MM_ALIGNED_HEADER_SIZE+END_MAGIC_SIZE))?(ZEND_MM_ALIGNED_MIN_HEADER_SIZE-(ZEND_MM_ALIGNED_HEADER_SIZE+END_MAGIC_SIZE)):0)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_MAX_SMALL_SIZE ((ZEND_MM_NUM_BUCKETS&amp;lt;&amp;lt;ZEND_MM_ALIGNMENT_LOG2)+ZEND_MM_ALIGNED_MIN_HEADER_SIZE)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_ALIGNED_HEADER_SIZE ZEND_MM_ALIGNED_SIZE(sizeof(zend_mm_block))
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_ALIGNED_FREE_HEADER_SIZE ZEND_MM_ALIGNED_SIZE(sizeof(zend_mm_small_free_block))
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_MIN_ALLOC_BLOCK_SIZE ZEND_MM_ALIGNED_SIZE(ZEND_MM_ALIGNED_HEADER_SIZE + END_MAGIC_SIZE)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_ALIGNED_MIN_HEADER_SIZE (ZEND_MM_MIN_ALLOC_BLOCK_SIZE&amp;gt;ZEND_MM_ALIGNED_FREE_HEADER_SIZE?ZEND_MM_MIN_ALLOC_BLOCK_SIZE:ZEND_MM_ALIGNED_FREE_HEADER_SIZE)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_ALIGNED_SEGMENT_SIZE ZEND_MM_ALIGNED_SIZE(sizeof(zend_mm_segment))
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_TRUE_SIZE(size) ((size&amp;lt;ZEND_MM_MIN_SIZE)?(ZEND_MM_ALIGNED_MIN_HEADER_SIZE):(ZEND_MM_ALIGNED_SIZE(size+ZEND_MM_ALIGNED_HEADER_SIZE+END_MAGIC_SIZE)))
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_SMALL_SIZE(true_size) (true_size &amp;lt; ZEND_MM_MAX_SMALL_SIZE)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_BUCKET_INDEX(true_size) ((true_size&amp;gt;&amp;gt;ZEND_MM_ALIGNMENT_LOG2)-(ZEND_MM_ALIGNED_MIN_HEADER_SIZE&amp;gt;&amp;gt;ZEND_MM_ALIGNMENT_LOG2))
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>下面依次解释各个宏的含义和作用&lt;/p>
+&lt;ul>
+&lt;li>ZEND_MM_ALIGNMENT&lt;/li>
+&lt;/ul>
+&lt;p>内存对齐的时候用到，值为8，无特别的逻辑含义&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>ZEND_MM_ALIGNMENT_LOG2&lt;/p>
+&lt;p>辅助内存对齐的时候用到，值为3，无特别的逻辑含义&lt;/p>
+&lt;/li>
+&lt;/ul></description></item><item><title>PHP内存管理ZMM(一)－基本概念、数据结构和相关初始化函数</title><link>https://petrie.github.io/posts/2018-04-08-php-zend-memory-manager/</link><pubDate>Sun, 08 Apr 2018 06:06:12 +0000</pubDate><guid>https://petrie.github.io/posts/2018-04-08-php-zend-memory-manager/</guid><description>&lt;h4 id="基本概念">基本概念&lt;/h4>
+&lt;p>&lt;img src="http://flykobe.com/wp-content/uploads/2015/03/php-zend-memory-manager.jpg" alt="ZZM架构图">&lt;/p>
+&lt;p>如上图所示，中间部分的zend memory manage由接口层、heap层、存储层(storage)组成。内存管理的主要逻辑在heap层中，后续主要讲解相关的数据结构和函数流程。&lt;/p>
+&lt;h4 id="基本数据结构">基本数据结构&lt;/h4>
+&lt;p>基于PHP-5.6&lt;/p>
+&lt;h5 id="zend_mm_block_info">zend_mm_block_info&lt;/h5>
+&lt;p>_zend_mm_block_info是ZMM内存管理中最小的数据单元。各字段含义见代码注释&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">typedef&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span> _zend_mm_block_info {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#if ZEND_MM_COOKIES
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> size_t _cookie;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#endif
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> size_t _size;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> size_t _prev;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>} zend_mm_block_info;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>PHP扩展开发－自动生成扩展骨架</title><link>https://petrie.github.io/posts/2018-03-29-first-php-extension/</link><pubDate>Thu, 29 Mar 2018 03:55:12 +0000</pubDate><guid>https://petrie.github.io/posts/2018-03-29-first-php-extension/</guid><description>&lt;p>PHP扩展编译有两种方式&lt;/p>
+&lt;ul>
+&lt;li>作为一个可装载模块或者DSO（动态共享对象）&lt;/li>
+&lt;li>静态编译到PHP&lt;/li>
+&lt;/ul>
+&lt;p>静态编译的方式直接和PHP编译到一起，步骤比较简单，但每次变更代码都要编译这个PHP代码，非常耗时，所以这里采用第二种方式&lt;/p>
+&lt;h4 id="开发环境">开发环境&lt;/h4>
+&lt;p>本文脚本命令仅在以下环境测试成功&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>操作系统：CentOS 6.9
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>PHP版本：PHP-7.1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="安装开发工具包">安装开发工具包&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>yum groupinstall -y &lt;span style="color:#e6db74">&amp;#39;Development Tools&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>如何独立的使用Laravel的IOC功能</title><link>https://petrie.github.io/posts/2018-03-21-laravel-ioc/</link><pubDate>Wed, 21 Mar 2018 05:55:12 +0000</pubDate><guid>https://petrie.github.io/posts/2018-03-21-laravel-ioc/</guid><description>&lt;p>Laravel拥有一个强大的IOC/DI容器。且可以独立于Laravel使用。本文介绍如何单独使用Laravel的container组件&lt;/p></description></item><item><title>PHP设置连接mysql超时时间</title><link>https://petrie.github.io/posts/2017-06-04-php-mysql-timeout/</link><pubDate>Sun, 04 Jun 2017 20:55:12 +0000</pubDate><guid>https://petrie.github.io/posts/2017-06-04-php-mysql-timeout/</guid><description>&lt;p>本文将分别介绍PHP的mysql扩展, mysqli扩展, mysql_pdo扩展,mysqlnd扩展和libmysql 这些名词的含义。以及他们之间的关系。最后再介绍如何配置mysql的超时时间。&lt;/p>
+&lt;h1 id="一mysqlmysqlimysql_pdomysqlnd扩展">一、mysql,mysqli,mysql_pdo,mysqlnd扩展&lt;/h1>
+&lt;p>当考虑连接到MySQL数据库服务器的时候，有三种主要的API可供选择：&lt;/p>
+&lt;ul>
+&lt;li>PHP的MySQL扩展&lt;/li>
+&lt;li>PHP的mysqli扩展&lt;/li>
+&lt;li>PHP数据对象(PDO)&lt;/li>
+&lt;/ul>
+&lt;p>三者都有各自的优缺点。下面的讨论就是为了对每种API的关键方面给出一个简短的介绍。&lt;/p></description></item><item><title>更新Mac的PHP默认版本</title><link>https://petrie.github.io/posts/2017-04-10-mac-php-version/</link><pubDate>Mon, 10 Apr 2017 01:07:38 +0000</pubDate><guid>https://petrie.github.io/posts/2017-04-10-mac-php-version/</guid><description>知识点 类*nx系统，系统默认软件的安装位置
+/usr/bin 非系统默认，brew安装的软件安装位置
+/usr/local/bin brew安装指定版本php后，执行一下命令，设置新版本为默认php版本 export PATH=&amp;#34;$(brew --prefix php56)/bin:$PATH&amp;#34; export PATH=&amp;#34;$(brew --prefix php56)/sbin:$PATH&amp;#34; export PATH=&amp;#34;/usr/local/bin:/usr/local/sbin:$PATH&amp;#34;</description></item><item><title>如何将Linux命令的结果作为下一个命令的参数</title><link>https://petrie.github.io/posts/2016-09-26-%E5%A6%82%E4%BD%95%E5%B0%86linux%E5%91%BD%E4%BB%A4%E7%9A%84%E7%BB%93%E6%9E%9C%E4%BD%9C%E4%B8%BA%E4%B8%8B%E4%B8%80%E4%B8%AA%E5%91%BD%E4%BB%A4%E7%9A%84%E5%8F%82%E6%95%B0/</link><pubDate>Mon, 26 Sep 2016 13:27:45 +0000</pubDate><guid>https://petrie.github.io/posts/2016-09-26-%E5%A6%82%E4%BD%95%E5%B0%86linux%E5%91%BD%E4%BB%A4%E7%9A%84%E7%BB%93%E6%9E%9C%E4%BD%9C%E4%B8%BA%E4%B8%8B%E4%B8%80%E4%B8%AA%E5%91%BD%E4%BB%A4%E7%9A%84%E5%8F%82%E6%95%B0/</guid><description>一、反引号 &amp;lsquo;`&amp;rsquo; echo `date`
+二、$() echo $(date)
+三、find exec参数 四、xargs find ./ | xarges ls -l</description></item><item><title>PHP 枚举类型</title><link>https://petrie.github.io/posts/2016-08-25-php-%E6%9E%9A%E4%B8%BE%E7%B1%BB%E5%9E%8B/</link><pubDate>Thu, 25 Aug 2016 18:00:54 +0000</pubDate><guid>https://petrie.github.io/posts/2016-08-25-php-%E6%9E%9A%E4%B8%BE%E7%B1%BB%E5%9E%8B/</guid><description>问题 PHP没有原声的枚举，从Java转过来的就懵逼了。那么怎么才能在PHP中使用枚举，而且又能被IDE识别呢。Constants（define）是一种办法，但是他是全局的，有命名空间冲突的问题。虽然数组没有命名空间问题，但是数组定义常量太模糊，而且运行时是可以被覆盖的，而且很少有IDE可以自动补全。
+解决方案一 1.简单的用法 abstract class DaysOfWeek { const Sunday = 0; const Monday = 1; // etc. } $today = DaysOfWeek::Sunday; 以上的方式很多情况下需要验证常量的值，以下的方法可以应用大部分场景
+2.完善的用法 abstract class BasicEnum { private static $constCacheArray = NULL; private static function getConstants() { if (self::$constCacheArray == NULL) { self::$constCacheArray = []; } $calledClass = get_called_class(); if (!array_key_exists($calledClass, self::$constCacheArray)) { $reflect = new ReflectionClass($calledClass); self::$constCacheArray[$calledClass] = $reflect-&amp;gt;getConstants(); } return self::$constCacheArray[$calledClass]; } public static function isValidName($name, $strict = false) { $constants = self::getConstants(); if ($strict) { return array_key_exists($name, $constants); } $keys = array_map(&amp;#39;strtolower&amp;#39;, array_keys($constants)); return in_array(strtolower($name), $keys); } public static function isValidValue($value, $strict = true) { $values = array_values(self::getConstants()); return in_array($value, $values, $strict); } } //应用场景 abstract class DaysOfWeek extends BasicEnum { const Sunday = 0; const Monday = 1; const Tuesday = 2; const Wednesday = 3; const Thursday = 4; const Friday = 5; const Saturday = 6; } DaysOfWeek::isValidName(&amp;#39;Humpday&amp;#39;); // false DaysOfWeek::isValidName(&amp;#39;Monday&amp;#39;); // true DaysOfWeek::isValidName(&amp;#39;monday&amp;#39;); // true DaysOfWeek::isValidName(&amp;#39;monday&amp;#39;, $strict = true); // false DaysOfWeek::isValidName(0); // false DaysOfWeek::isValidValue(0); // true DaysOfWeek::isValidValue(5); // true DaysOfWeek::isValidValue(7); // false DaysOfWeek::isValidValue(&amp;#39;Friday&amp;#39;); // false 解决方案二 使用PHP Perl扩展中的SplEnum 示例</description></item><item><title>个人成长</title><link>https://petrie.github.io/posts/2016-08-24-personal-growth/</link><pubDate>Wed, 24 Aug 2016 11:33:02 +0000</pubDate><guid>https://petrie.github.io/posts/2016-08-24-personal-growth/</guid><description>“成功的人可能只做对了一件事”阅读笔记
+熟悉事物发展的趋势 所以所谓的坚持不懈，可能仅仅是对于自己身处位置的准确理解而已。如果你知道再忍耐一段时间，等待你的不是深渊，而是重新回暖的上升曲线，可能心态上就会平静许多。
+学会“三分钟冷静” 这个时候最重要的其实只是给自己降降温，学会 “三分钟冷静”。在我看来，这其实是比失望的时候给自己鼓励都要难得多的事情。
+目标要具体 用于推翻自己 2016 年还剩下四个多月的时间，调整一下心态，修改一下计划，说不定你能在年末的时候给自己一个惊喜。**大部分人坚持不下去的原因，**其实就是在开头的时候消耗了太多的力气。</description></item><item><title>文章是如何写出来的</title><link>https://petrie.github.io/posts/2016-08-23-%E6%96%87%E7%AB%A0%E6%98%AF%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E6%9D%A5%E7%9A%84/</link><pubDate>Tue, 23 Aug 2016 15:37:30 +0000</pubDate><guid>https://petrie.github.io/posts/2016-08-23-%E6%96%87%E7%AB%A0%E6%98%AF%E5%A6%82%E4%BD%95%E5%86%99%E5%87%BA%E6%9D%A5%E7%9A%84/</guid><description>“霍炬：文章是如何写出来的”阅读笔记
+选取一个和别人不懂得角度 我更关注的不是“人们流行什么”，而是“我能做什么”。首先要给自己找几个标签，我给自己找的大概有”技术“、”互联网“、”从北美看中国“，很少的几个，也很简单。因为我有一个理论，人不可能擅长所有事情，应该找几个自己熟悉的领域，做好它。有了这几个标签之后，剩下的就是把各种事件和他们组合。最近比较火的两篇，快播是“技术”+“法律”、百度这篇是“互联网”+“新闻热点”，这些标签也是具体逻辑到文章的切入点，同时他们也提供了前面所说的“独特性”。一个事件，如果不能找到我自己确定的几个标签相关的部分，我就不参与，再热门也不参与，这是所谓的“只做专业的事”。我通过这些标签保证了文章的专业性，这是基础，如果我放弃了专业和准确，文字本身再好也没什么价值。</description></item><item><title>个人成长</title><link>https://petrie.github.io/posts/2016-08-23-personal-growth/</link><pubDate>Tue, 23 Aug 2016 14:05:11 +0000</pubDate><guid>https://petrie.github.io/posts/2016-08-23-personal-growth/</guid><description>学习学习再学习《顾强：影响我个人成长的5个方法》阅读笔记
+写作-最好的自我成长方式 如何组织文字 阑夕老师微信公众号“几点看法”系列文章，每篇都是按照 1-10 的序列来组织。对于像我这样的新手来说，这个建议最大的好处是让我不纠结如何来组织文字，而专注于思考，把想表达的内容想清楚后按照一定的先后顺序表达出来即可。
+对于文章的节奏感，也就是最好能给做到让读者一口气读完，这个其实是需要很高的驾驭文字的能力。我现在能给做到的就是写完后反复的阅读，调整语句的表达方式，比如把长句修改为短句，去掉多余的不必要的“的、地、了”等助词，去掉影响文章阅读流畅度的冗余的不想干的文字等等。
+写作后的几点感悟 1.要有感而发，对读者有启发
+2.写作是最高效的沟通方式
+3.阅读是写作灵感的源泉
+分解-让我们尽快开始 焦虑情绪 在生活中，我经常会出现焦虑情绪，哪怕对于自己认为很重要的事情，也会拖到最后一刻才完成。我分析了一下，焦虑，拖延的最重要的原因是自己没头绪、对任务完成没有信心。
+比如，写一篇长点文章，准备演讲材料、啃一本英文书这类相对复杂的任务。往往一拖再拖。对于写文章，我们可以先思考文章主要想表达的内容，罗列文章大纲，然后再根据大纲收集相关的素材。
+对这类个人任务的动作分解最大的作用就是让我们理清头绪，客服畏惧心理，尽快开始起来。我的经验是，这些任务要开始起来，在做的过程中，一些想象中的困难可能并不存在，我们只是缺一个开始。</description></item><item><title>PHP面试知识点</title><link>https://petrie.github.io/posts/2016-07-24-php%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9/</link><pubDate>Sun, 24 Jul 2016 14:25:20 +0000</pubDate><guid>https://petrie.github.io/posts/2016-07-24-php%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9/</guid><description> 伯乐在线面试题
+cnblogs面试题
+​</description></item><item><title>《恋爱的犀牛》</title><link>https://petrie.github.io/posts/2016-07-23-%E6%81%8B%E7%88%B1%E7%9A%84%E7%8A%80%E7%89%9B/</link><pubDate>Sat, 23 Jul 2016 22:56:54 +0000</pubDate><guid>https://petrie.github.io/posts/2016-07-23-%E6%81%8B%E7%88%B1%E7%9A%84%E7%8A%80%E7%89%9B/</guid><description>起 黄昏是我一天中视力最差的时候，一眼望去满街都是美女，高楼和街道也变幻了通常的形状，象在电影里……你就站在楼梯的拐脚，带着某种清香的味道，有点湿乎乎的，奇怪的气息。擦身而过的时候，才知道你在哭。事情就在那时候发生了。
+我的爱情丢了，丢失在喧闹的街道边，丢失在岁月的沙漏里，在无穷无尽的货架上， 来来往往的出租车里，忙忙碌碌寻求成功的工作中，以及一个又一个男人的面孔间。我已经丢失了我的爱情……  忘掉她，忘掉她就可以不必再忍受，忘掉她就可以不必再痛苦。忘掉她，忘掉你没有的东西，忘掉别人有的东西，忘掉你失去和以后不能得到的东西，忘掉仇恨，忘掉屈辱，忘掉爱情，像犀牛忘掉草原，像水鸟忘掉湖泊，像地狱里的人忘掉天堂，像截肢的人忘掉自己曾快 步如飞，像落叶忘掉风，像图拉忘掉母犀牛。忘掉是一般人能做的唯一的事。但是我决定不忘掉她。
+这就是图拉，我最好的，也是最后的伙伴。明明，我想给你一切，可我一无所有。我想为你放弃一切，可我又没有什么可以放弃。钱、地位、荣耀，我仅有的那一点点自尊没有这 些东西装点也就不值一提。如果是中世纪，我可以去做一个骑士，把你的名字写上每一座被征 服的城池。如果在沙漠中，我会流尽最后一滴鲜血去滋润你干裂的嘴唇。如果我是天文学家， 有一颗星星会叫做明明；如果我是诗人，所有的声音都只为你歌唱；如果我是法官，你的好恶 就是我最高的法则；如果我是神父，再没有比你更好的天堂；如果我是个哨兵，你的每一个字 都是我的口令；如果我是西楚霸王，我会带着你临阵脱逃任由人们耻笑；如果我是杀人如麻的 强盗，他们会祈求你来让我俯首帖耳。可我什么也不是。一个普通人，一个像我这样普通的人 ，我能为你做什么呢？
+一切白的东西和你相比都成了黑墨水而自惭形秽，
+一切无知的鸟兽因为不能说出你的名字而绝望万分，
+一切路口的警察亮起绿灯让你顺利通过，
+一切正确的指南针向我标示你存在的方位。
+你是不留痕迹的风，
+你是掠过我身体的风，
+你是不露行踪的风，你是无处不在的风……
+终 剧，拎起生活</description></item><item><title>MySQL datetime vs timestamp</title><link>https://petrie.github.io/posts/2016-07-23-mysql-datetime-vs-timestamp/</link><pubDate>Sat, 23 Jul 2016 13:03:01 +0000</pubDate><guid>https://petrie.github.io/posts/2016-07-23-mysql-datetime-vs-timestamp/</guid><description>MySQL 时间类型最佳实践 通常建立数据库表的时，最常出现的两个字段是，数据的创建时间和更新时间。这篇文章为大家整理出关于这两个字段数据类型选择（timestamp vs datetime）的推荐实践。
+首先介绍下两种数据类型的试用场景
+timestamp timestamp通常用来追踪数据记录的变化时间，通常它被设置成跟着字段的更新而更新 DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 。如果你只是想存储某个具体的时间值，datetime字段更合适。
+它具有以下特点
+它以UTC时间格式存储 可以由Mysql自动初始化和更新 可存储范围 1970-01-01 00:00:01 UTC to 2038-01-19 03:14:07 UTC datetime datetime字段可以很方便的通过SELECT UNIX_TIMESTAMP(my_datetime) 转换为Linux 时间戳。
+它具有以下特点
+存储内容，所存即所得 可存储范围1000-01-01 00:00:00 to 9999-12-31 23:59:59 可以指定日和月字段为0值 某些情况下可以设置默认值now()。但是此种方式并不推荐 以上 实践一
+CREATE TABLE ts ( id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL, created_at DATETIME , changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ); 实践一的优点</description></item><item><title>Mac下“.bashrc”不生效</title><link>https://petrie.github.io/posts/2016-06-29-mac%E4%B8%8B-bashrc%E4%B8%8D%E7%94%9F%E6%95%88/</link><pubDate>Wed, 29 Jun 2016 10:54:10 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-29-mac%E4%B8%8B-bashrc%E4%B8%8D%E7%94%9F%E6%95%88/</guid><description>新建&amp;quot;~/.bash_profile&amp;quot;，写入下面代码：
+if [ &amp;#34;${BASH-no}&amp;#34; != &amp;#34;no&amp;#34; ]; then [ -r ~/.bashrc ] &amp;amp;&amp;amp; . ~/.bashrc fi 原因是执行.bashrc需要执行login shell， 而Mac启动时不会执行login shell，打开terminal也不会执行login shell</description></item><item><title>Kafka server安装教程</title><link>https://petrie.github.io/posts/2016-06-29-kafka-server%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/</link><pubDate>Wed, 29 Jun 2016 00:01:13 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-29-kafka-server%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/</guid><description>下载解压 下载地址： https://www.apache.org/dyn/closer.cgi?path=/kafka/0.10.0.0/kafka_2.11-0.10.0.0.tgz
+&amp;gt; tar -xzf kafka_2.11-0.10.0.0.tgz &amp;gt; cd kafka_2.11-0.10.0.0 启动Kafka服务 Kafka服务需要安装ZooKeeper。如果没有你可以使用kafka附带的临时脚本来启动ZooKeeper
+#启动ZooKeeper &amp;gt; bin/zookeeper-server-start.sh config/zookeeper.properties [2013-04-22 15:01:37,495] INFO Reading configuration from: config/zookeeper.properties (org.apache.zookeeper.server.quorum.QuorumPeerConfig) ... #启动kafka &amp;gt; bin/kafka-server-start.sh config/server.properties [2013-04-22 15:01:47,028] INFO Verifying properties (kafka.utils.VerifiableProperties) [2013-04-22 15:01:47,051] INFO Property socket.send.buffer.bytes is overridden to 1048576 (kafka.utils.VerifiableProperties) ... 创建测试Topic Let&amp;rsquo;s create a topic named &amp;ldquo;test&amp;rdquo; with a single partition and only one replica:
+&amp;gt; bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test We can now see that topic if we run the list topic command:</description></item><item><title>Git回到未来—时间旅行一</title><link>https://petrie.github.io/posts/2016-06-28-git%E5%9B%9E%E5%88%B0%E6%9C%AA%E6%9D%A5%E6%97%B6%E9%97%B4%E6%97%85%E8%A1%8C%E4%B8%80/</link><pubDate>Tue, 28 Jun 2016 23:39:07 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-28-git%E5%9B%9E%E5%88%B0%E6%9C%AA%E6%9D%A5%E6%97%B6%E9%97%B4%E6%97%85%E8%A1%8C%E4%B8%80/</guid><description>依赖命令 副标题：Git cherry-pick命令和Git reset —hard 命令介绍</description></item><item><title>GIT反转提交</title><link>https://petrie.github.io/posts/2016-06-28-git%E5%8F%8D%E8%BD%AC%E6%8F%90%E4%BA%A4/</link><pubDate>Tue, 28 Jun 2016 23:09:45 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-28-git%E5%8F%8D%E8%BD%AC%E6%8F%90%E4%BA%A4/</guid><description>场景：Git rebase可以更改提交历史，但是在多人协同的场景下，更改历史只能针对自己的版本库，无法修改别人的版本库。在这种情况下想要修正一个错误历史提交的正确做法是反转提交，重新做一次提交操作，相当于用错误历史的反向提交，来修正错误的提交。
+#反转提交最后一次提交 Git revert HEAD #反转提交最后一次提交的前一次 Git revert HEAD^</description></item><item><title>打开CSV，清除科学计数法</title><link>https://petrie.github.io/posts/2016-06-28-%E6%89%93%E5%BC%80csv%E6%B8%85%E9%99%A4%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/</link><pubDate>Tue, 28 Jun 2016 20:16:28 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-28-%E6%89%93%E5%BC%80csv%E6%B8%85%E9%99%A4%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/</guid><description>原始数据
+87967232479237238 87967232479237238 87967232479237238 87967232479237238 87967232479237238 以上数据存为csv文件后，用excel打开后自动展示科学计数法，处理后则不会，处理后数据如下：
+=&amp;#34;87967232479237238&amp;#34; =&amp;#34;87967232479237238&amp;#34; =&amp;#34;87967232479237238&amp;#34; =&amp;#34;87967232479237238&amp;#34; =&amp;#34;87967232479237238&amp;#34;</description></item><item><title>curl调用上传文件接口</title><link>https://petrie.github.io/posts/2016-06-28-curl%E8%B0%83%E7%94%A8%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E6%8E%A5%E5%8F%A3/</link><pubDate>Tue, 28 Jun 2016 20:07:11 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-28-curl%E8%B0%83%E7%94%A8%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E6%8E%A5%E5%8F%A3/</guid><description>一般场景下，使用curl模拟get，post请求。 今天的manpage是模拟上传文件请求
+-F 参数执行文件路径和其他参数 -H 自定义 Host
+curl -F &amp;#34;file=@/home/petrie/illegal_driver02.txt;name=file&amp;#34; &amp;#34;http://127.0.0.1:8000/biz/driver_mis/driver/uploadcsv&amp;#34; -H mis.petrie.com.cn</description></item><item><title>Nignx+PHP中HTTP请求返回502</title><link>https://petrie.github.io/posts/2016-06-28-nignx-php%E4%B8%ADhttp%E8%AF%B7%E6%B1%82%E8%BF%94%E5%9B%9E502/</link><pubDate>Tue, 28 Jun 2016 19:38:18 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-28-nignx-php%E4%B8%ADhttp%E8%AF%B7%E6%B1%82%E8%BF%94%E5%9B%9E502/</guid><description>Nginx + PHP-FPM 报 502 错误，我想大部分 RD 都遇到过吧。根据报错的频率，可以分为两种情况，间歇性的502和连续性的502。间歇性502，是后端 PHP-FPM 不可用造成的，间歇性的502一般认为是由于 PHP-FPM 进程重启造成的。连续性502很可能是由于cgi处理时间过长导致超时所致。下面讨论超时相关的参数：
+nginx 相关配置:nginx.conf
+fastcgi_connect_timeout 300; fastcgi_send_timeout 300; fastcgi_read_timeout 300; php-fpm相关配置:php-fpm.conf
+request_terminate_timeout = 10s php 相关配置:php.ini
+max_execution_time</description></item><item><title>3分钟读完《学会提问》</title><link>https://petrie.github.io/posts/2016-06-24-3%E5%88%86%E9%92%9F%E8%AF%BB%E5%AE%8C%E5%AD%A6%E4%BC%9A%E6%8F%90%E9%97%AE/</link><pubDate>Fri, 24 Jun 2016 11:57:07 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-24-3%E5%88%86%E9%92%9F%E8%AF%BB%E5%AE%8C%E5%AD%A6%E4%BC%9A%E6%8F%90%E9%97%AE/</guid><description>一、学会提出好问题 一寸光阴一寸金，在决定花大把光阴取客观评估一个问题之前，最好先问一下自己：“这个问题关我什么事？”
+更明智、更进步的做法是一旦思考，目的就是要让我们的思想更有深度，让我们的思想更加精确。 接受还是拒绝一个立场，感情上的依恋绝不应该成为最重要的基础。
+一个人有没有头脑，主要的标志就要看他能否提供充足的证据来支撑他的看法，尤其当这些看法存在争议没有定论时更是这样。
+找到理由有提示词：
+由于、因为这个原因、鉴于、研究显示、第一、第二、第三等等。 请记住结论本身并不是证据，它是一个由证据或其他看法支撑起来的看法。
+二、哪些词语意思不明确 只有理解了关键术语和词组的意思（无论是直接的还是含蓄的意思），你才能对一个论证进行评价。 如果你没有要求作者将这些意思不明确的词语解释清楚就贸然接受了他的论证，那你根本就不理解你同意或接受的到底是什么。 总之，谁想要说服你，谁就得负责解释清楚。
+三、什么是价值观假设和描述性假设 一旦我们发现了一个价值观假设，我们有权质疑为什么他会做出这个价值观假设
+四、推理过程中有没有谬误 常见的几种谬误：
+人身攻击：针对个人的人身攻击或侮辱，而不是直接反驳其提出的理由。 滑坡谬误：指假设采取提议的行动会引发一系列不可控的不利事件，而事实上却有现成的程序来防止这类连锁事件的发生。 妄求完美解决方案：错误地假定，如果使用一种方法不能使该问题得到彻底解决，就不采用这种方法。 偷换概念：在论证中关键词语有两种或两种以上的含义，一旦不同含义之间的转换被认出来，这个论证就讲不通了。 诉诸公众：试图通过偏爱多数人一致赞成的观点使某个观点合理化，错误地认为多数人支持的就是合理的。 诉诸权威：指引用某一权威的话来证明结论，但该权威对这一论题并没有特别的专门知识。 诉诸感情：指使用带强烈感情色彩的语言来分散读者或听众的注意力，让他们忽视相关的理由和证据。常被用来加以利用的感情有害怕、希望、爱国主义、怜悯和同情。 稻草人：指歪曲对方的观点，使它容易受到攻击，这样我们攻击的观点事实上根本就不存在。 虚假的两难选择：指当现实中存在两种以上的选择时却假设只有两种解决方案。 一厢情愿：做出错误的假设，即因为我们希望 X 是真实的或者错误的，那么 X 就是真实的或错误的。 四、有没有替代原因 要想弄清楚一件事，就必须弄清楚引起这件事的原因。 要竭力对你自己的偏见保持敏感和警惕。</description></item><item><title>3分钟读完《津巴多时间心理学》</title><link>https://petrie.github.io/posts/2016-06-24-zimbardo-time-psychology/</link><pubDate>Fri, 24 Jun 2016 10:17:05 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-24-zimbardo-time-psychology/</guid><description>时间观分类 消极的过去时间观 积极的过去时间观 宿命主义的现在时间观 享乐主义的现在时间观 未来时间观 超未来时间观 因此，我们要学会辨别我们是否会牺牲其他时间观念而陷在某种时间观念中。 坚持探索比前进重要的多。偏离正轨一天。
+快乐的人具备的特征以及 12 条快乐的方法 表达感激、避免过度沉思、学会原谅（过去）
+和善言行的运用、培养良好的关系、增加流动体验、享受生活中的愉悦、照顾好你的身体（现在）
+培养乐观心态、制定人生目标、发展应对策略（未来）
+宗教实践或培养灵性（超未来）
+无论是恋爱还是婚姻，与对方分享时间至关重要。 许下承诺前，确定你们的时间观是否一致
+时间与健康、商业和政治 在当前和未来方向之间缺乏平衡，是企业发展道路上的灭顶之灾。 充满魅力的领导者能全神贯注，用极大热情为未来目标努力
+具体的措施和方法 对于积极的过去时间观的人应该用未来时间观平衡，因为过度沉溺于美好的过去，习惯停留在舒适区，你不太可能抓住机会去冒险、去尝试新事物。
+改变消极的过去，你可以写出过去的消极事件；以及从中得到什么积极信息；这种积极重建后怎样影响你的未来。除此之外，为了构建积极的过去时间观，你还可以做以下事情：多回老家看看，参加传统节日，感谢你的亲人，在家里放充满幸福时光的照片，听经典的老歌，看经典的老电影等。
+充分享受现在，进行放松训练，学会瑜伽、冥想，学着讲笑话，主动制定计划，每周用一天完全用来放松，做你一直想做但没做的事情；享受感官的快乐；和小孩、宠物玩耍，允许自己大哭和大笑等。
+更加积极面向未来，建立稳定的个人生活，准确感受未来。
+最后 为今天、明天、一个月后选择合理、能实现的目标，列出清单，随身携带、时常回顾；制作待办事项清单，根据重要性与否排序，勾出已完成的，每完成一项给自己一个小奖励。把已经完成的目标制成表格，进行心理模拟和可视化演练，读一些好的科幻小说。</description></item><item><title>shell命令行for语句</title><link>https://petrie.github.io/posts/2016-06-23-shell-for/</link><pubDate>Thu, 23 Jun 2016 15:14:34 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-23-shell-for/</guid><description>很久就想写一篇关于shell的for语法的博客了。预谋了很久，今天终于提笔 核心语法
+for i in `ls`;do echo $i;done; 常见场景：
+查询一组host对应的IP
+for计数和shell的四则运算
+for((i=1;i&amp;lt;=10;i++));do echo $(expr $i \* 4);done for计数2
+for i in $(seq 10) for循环命令执行结果
+for i in `ls` 或者
+for i in $(ls) for循环数组变量
+arr=(1 2 3 4);for i in ${arr[@]};do echo $i;done;</description></item><item><title>Git多步悔棋</title><link>https://petrie.github.io/posts/2016-06-23-git-reset-soft/</link><pubDate>Thu, 23 Jun 2016 10:26:12 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-23-git-reset-soft/</guid><description>上一篇讲到Git commit --amend单步悔棋的实现，是由Git reset --soft别名而来，这篇将讲解如何利用Git reset --soft多步悔棋 操作步骤 1.实用soft参数调用重置命令，回到指定的提交之前
+Git reset --soft HEAD^^ 2.查看版本状态和提交日志，可以看出最后的两次提交被
+Git status Git log -l 3.执行提交操作
+Git commit -m &amp;#39;this is soft commit&amp;#39; 4.看看提交日志，“多步悔棋”操作成功</description></item><item><title>Array in Javascript</title><link>https://petrie.github.io/posts/2012-10-08-javascript-array/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-10-08-javascript-array/</guid><description> Javascript数组是无类型的：数组元素可以是任意类型，并且同一个数组中的不同元素也可能有不同的类型。 可以使用非负整数来索引数组。在这种情况下，数值装换为字符串，字符串作为属性名来用。 数组类型索引仅仅是对象属性名的一种特殊类型，这意味着Javascript数组没有越界的概念。 通常，数组的length属性值代表数组中元素的个数。如果数组是稀疏的，length属性值大于元素的个数。 当在数组直接量中省略时不会创建稀疏数组。省略的元素在数组中是存在的，其值为undefined.这和数组元素根本不存在是有一些微妙的区别的。可以用in操作符检测连着之间的区别。 var a1=[,,,] //数组是[undefined,undefined,undefined]
+var a2=new Array(3) //该数组根本没有元素
+0 in a1 //=&amp;gt; true:a1 在索引0处有一个元素
+0 in a2 //=&amp;gt; false:a2在元素0处一个值为undefined的元素
+当使用for/in循环时，a1和a2之间的区别也很明显。 在嵌套循环或其他性能非常重要的上下文中，优化代码 for(var i=0,len=keys.length;i&amp;lt; len;i++)
+Array.join()方法是String.split()方法的逆向操作，后者是将字符串分割成若干块来创建一个数组。 数组对象的有一些特性是其他对象所没有的 当有新的元素添加到列表中时，自动更新length属性 设置length为一个较小值将截断数组 从Array.prototype中继承一些有用的方法 其类属性为“Array”</description></item><item><title>CI 环境配置</title><link>https://petrie.github.io/posts/2015-03-05-ci-config/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2015-03-05-ci-config/</guid><description>502 bad getway
+原因：php-cgi 没启动
+Your system folder path does not appear to be set correctly. Please open the following file and correct this: index.php
+原因：CI框架 system,application 路径配置错误</description></item><item><title>Git单步悔棋操作</title><link>https://petrie.github.io/posts/2016-06-22-git-commit-amend/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-22-git-commit-amend/</guid><description>本篇要点
+Git commit --amend 此命令简单来讲，就是Git的悔棋操作，我工作中最常见的场景
+1.写完一段代码 Git add，Git commit 2.发现一些注释不够完整，或者发现一些错别字 3.改了后再次 Git add，Git commit 4.完事
+这个时候问题就来了，对于一个处女座来说，以上的同一件事情产生了两个commit。强迫症就犯了。辣么学会了Git commit的&amp;ndash;amend参数你就可以解放了。Git commit &amp;ndash;amend可以将本次提交和最后一次提交完美融合。是不是处女座的福音？！
+manpage解释：
+&amp;ndash;amend Replace the tip of the current branch by creating a new commit. The recorded tree is prepared as usual(including the effect of the -i and -o options and explicit pathspec), and the message from the original commitis used as the starting point, instead of an empty message, when no other message is specified from the command line via options such as -m, -F, -c, etc.</description></item><item><title>Git文章发布方法</title><link>https://petrie.github.io/posts/2014-05-27-how-pub-article/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2014-05-27-how-pub-article/</guid><description> Git clone repo new post file Git add new file Git commit push</description></item><item><title>Hexo文章发布流程</title><link>https://petrie.github.io/posts/2016-06-21-hello-world/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-21-hello-world/</guid><description>Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
+Quick Start Create a new post $ hexo new &amp;#34;My New Post&amp;#34; More info: Writing
+Run server $ hexo server More info: Server
+Generate static files $ hexo generate More info: Generating
+Deploy to remote sites $ hexo deploy More info: Deployment</description></item><item><title>Java Class 生命周期</title><link>https://petrie.github.io/posts/2013-08-26-java-load-class-step/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2013-08-26-java-load-class-step/</guid><description>####Loading (加载） ####Verification(验证） ####Preparation(准备） ####Resolution（解析） ####Unloading（卸载） ####Using（使用） ####Initialization（初始化）</description></item><item><title>Jekyll Install Troubleshooting</title><link>https://petrie.github.io/posts/2014-03-06-jekyll-install-error/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2014-03-06-jekyll-install-error/</guid><description> 错误内容： ERROR: Error installing jekyll: ERROR: Failed to build gem native extension.
+高版本的ruby 导致的问题，修复命令：
+sudo apt-get install ruby1.9.1-dev gem install jekyll</description></item><item><title>Linux Svn Cmd</title><link>https://petrie.github.io/posts/2015-01-30-linux-svn-cmd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2015-01-30-linux-svn-cmd/</guid><description>svn diff [-r PREV] PATH 对比当前本地的工作拷贝文件(working copy)和任意版本A的差异
+svn diff -r94239 对比任意历史版本A和任意历史版本B的差异
+svn diff -r94239:94127</description></item><item><title>Linux下搭建Samba服务器</title><link>https://petrie.github.io/posts/2013-02-18-linux-samba/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2013-02-18-linux-samba/</guid><description>##Linux下搭建Samba服务器##
+安装文件
+三种方式获取安装文件
+1. 网络下载
+在http://rpmfind.net搜索&amp;quot;samba&amp;quot;,下载对应rpm文件
+2. 安装光盘
+通过mount绑定到系统，然后拷贝使用详见
+3. iso文件
+通过mount绑定到系统，然后拷贝使用详见
+安装命令
+采用RPM方式安装。
+rpm -ivh samba_版本信息.rpm
+配置Samba
+配置文件位置: /etc/samba/smb.conf</description></item><item><title>Linux挂载ISO文件</title><link>https://petrie.github.io/posts/2012-09-18-linux-mount-iso/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-09-18-linux-mount-iso/</guid><description>Linux 下绑定ISO文件 在/mnt下创建/mnt/centos_iso文件夹
+mkdir /mnt/centos_iso
+将/home/cksamba/share/下的centos.iso挂在到/mnt/centos_iso文件夹下
+mount /home/cksamba/share/centos.iso /mnt/centos_iso -t iso9660 -o ro,loop=/dev/loop0
+或者
+mount /home/cksamba/share/centos.iso /mnt/centos_iso -o loop -t iso9660</description></item><item><title>LNMP环境搭建（一）安装前准备</title><link>https://petrie.github.io/posts/2012-10-23-lnmp-first-prepare/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-10-23-lnmp-first-prepare/</guid><description>博客后续将退出LNMP环境搭建系列博文：
+安装依赖库： yum -y install gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5 krb5-devel libidn libidn-devel openssl openssl-devel openldap openldap-devel nss_ldap openldap-clients openldap-servers
+以上命令在连网下才能进行，如果不能联网需要配置本地yum源，配置方法请点击我以前的文章点击
+下载安装所需的源码包： PHP相关程序包 php源码包：点击 php依赖的libmcrypt加密库：点击 php依赖的mcrypt加密库：点击 php依赖的编码转换库：点击 php依赖的mhash库：点击 memcache源码包：点击 eaccelerator源码包：点击 PDO_MYSQL源码包：点击 ImageMagick源码包：点击 imagick源码包：点击 Nginx 相关程序包 Nginx源码包：点击 MySQL相关程序包 MySQL源码包：点击 本文旨在在张宴博客的基础上，使得安装过程更加清晰易懂，更加适合新手。</description></item><item><title>LNMP环境搭建（二） 编译安装MySQL</title><link>https://petrie.github.io/posts/2012-10-25-lnmp-second-mysql/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-10-25-lnmp-second-mysql/</guid><description>编译安装MySQL
+1. 创建组和用户
+groupadd Mysql
+useradd -g Mysql Mysql
+2. 解压源码包并进入
+tar zxvf Mysql-5.5.3-m3.tar.gz
+cd Mysql-5.5.3-m3
+3. 配置cmake编译参数
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/Mysql \
+-DSYSCONFDIR=/usr/local/Mysql/etc \
+-DMYSQL_DATADIR=/usr/local/Mysql/data \
+-DMYSQL_TCP_PORT=3306 \
+-DMYSQL_UNIX_ADDR=/tmp/Mysqld.sock \
+-DMYSQL_USER=Mysql \
+-DEXTRA_CHARSETS=all \
+-DWITH_READLINE=1 \
+-DWITH_SSL=system \
+-DWITH_EMBEDDED_SERVER=1 \
+-DENABLED_LOCAL_INFILE=1 \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DWITHOUT_PARTITION_STORAGE_ENGINE=2
+4. 编译安装
+make &amp;amp;&amp;amp; make install
+5. 将安装目录极其子目录的所属组和拥有者设置为Mysql:Mysql
+chown -R Mysql:Mysql /usr/local/Mysql
+cd ..
+6. 以Mysql用户帐号的身份建立数据表</description></item><item><title>Nginx 启动选项</title><link>https://petrie.github.io/posts/2012-09-29-nginx-options/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-09-29-nginx-options/</guid><description>Nginx 命令行参数和信号 选项 -c &amp;lt;/path/to/config&amp;gt; 为nginx指定一个配置文件，来代替缺省的
+t 不运行，而仅仅测试配置文件。nginx 将检查配置文件的语法的正确性，并尝试打开配置文件中所引用到的文件。
+-v 显示nginx 的版本
+-V 显示nginx 的版本，编译器版本和配置参数</description></item><item><title>Nginx配置PATHINFO</title><link>https://petrie.github.io/posts/2012-11-02-configure-nginx-pathinfo/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-11-02-configure-nginx-pathinfo/</guid><description>最近在学习php，《PHP和MySQL Web开发》零零碎碎的算是看完了，讲了一下基础的东西，对于入门是足够了。前几天开始些项目，是在先前别人的基础上写的，同时有事两个人一起写。完成之后看了看，代码太乱了，包括代码结构和命名规范。遂决定找点着方便的资料。
+在网上搜来搜去，找到了篇挺不错的PHP框架（ThinkPHP）教程：http://www.thinkphp.cn/info/155.html 着实还不错，推荐学习PHP的同学看看。
+这篇教程的默认环境是wamp的，由于我用的是Nginx，在学习第二篇的时候就遇到了问题。ThinkPHP支持的URL模式：PATHINFO Nginx默认配置是不支持的。本以为是自己ThinkPHP环境配置的问题，后来删了所有的相关文件（我的一贯作风&amp;ndash;屡试不爽），重新配置ThinkPHP环境，可是还是同样的报404错误。这样的话只能是Nginx和php配置的问题了。
+URL首先是通过Nginx解析的，先从Nginx下手。猜想Nginx是不是不支持ThinkPHP的PATHINFO呢。于是百度一下，便一目了然了。
+试了几篇博文的方法，最后终于弄好了。
+废话结束
+打开Nginx的配置文件nginx.conf
+在server中加入一下配置：
+location ~ .php {
+root d:/ThinkPHP/;
+fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+fastcgi_pass 127.0.0.1:9000;
+fastcgi_index index.php;
+include fastcgi_params;
+#pathinfo support
+set $real_script_name $fastcgi_script_name;
+set $path_info &amp;ldquo;&amp;rdquo;;
+if ( $fastcgi_script_name ~ &amp;ldquo;^(.+?.php)(/.+)$&amp;rdquo;){
+set $real_script_name $1;
+set $path_info $2;
+} fastcgi_param SCRIPT_NAME $real_script_name;
+fastcgi_param PATH_INFO $path_info;
+}
+需要注意的是那个if判断语句，在(的前后都必须有空格，否则Nginx会报配置语法错误。</description></item><item><title>Spring 资源访问剖析和策略模式应用</title><link>https://petrie.github.io/posts/2013-09-03-strategy-pattern/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2013-09-03-strategy-pattern/</guid><description>##Spring 资源访问剖析和策略模式应用##
+http://www.ibm.com/developerworks/cn/java/j-lo-spring-resource/</description></item><item><title>SQLServer 便捷管理多个服务器</title><link>https://petrie.github.io/posts/2012-09-27-sqlserver-sql-manager/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-09-27-sqlserver-sql-manager/</guid><description>哇 你好out，还在用2005. 发现自己博客有个特点（这才谢了几篇，就总结出特点了），就是没篇要介绍的东西都很少，一个命令、一个技巧，但我通常都能罗出一大堆。这不，今天又是这个节奏。
+从我的优点说起 我的有点是什么呢？ 被某个东西折磨久了，就会主动去找一个便捷的代替方式。这次就是，SQL Server应该很多人都用过吧！好了不废话了，其实我要介绍两个东西。
+1.“SQL Server 解决方案资源管理器”
+2.SQL Server 下连接访问远程数据库
+1.SQL Server 解决方案资源管理器 这个很简单，就是一个SQL Server的子窗口，只不过不常用SQL Server的人很难发现，工作原因我用的较多，就发现了。依次“视图”-&amp;gt;“解决方案资源管理器”就出来了，就是这个窗口，你可以将相关的服务器和SQL文件保存在同一个解决方案里，这样找的时候十分的方便。
+2.SQL Server 下连接访问远程数据库 简单来说其实就几条SQL语句。
+exec sp_addlinkedserver 'myserver','','SQLOLEDB ','远程服务器名或ip地址' exec sp_addlinkedsrvlogin 'myserver','false',null,'username','password'
+有了上面两句就可以直接远程操作数据库了：
+select * from myserver.database.dbo.table;
+就这样吧!
+拾遗 参考文章</description></item><item><title>Tar in Linux</title><link>https://petrie.github.io/posts/2012-10-19-linux-tar/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-10-19-linux-tar/</guid><description>将当前文件夹下的所有以.jpg为后缀的文件打包到all.tar.gz 压缩包内:
+tar -czvf all.tar.gz * .jpg
+将压缩文件all.tar.gz解压到文件夹dir下:
+tar -xzvf all.tar.gz -C dir</description></item><item><title>vim 宏</title><link>https://petrie.github.io/posts/2012-09-26-vim-define/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-09-26-vim-define/</guid><description>##扯淡 用过Markdown的同学都应该知道，其换行语法为在行尾加两个空格。
+今天在用Markdown写东西的时候，需要从txt文件中黏贴大量文本。如果我想让其正常的显示换行，就需要在每一行的末尾加上两个空格。一行行添加，太麻烦了，很自然的想到了vim。
+利用vim中ctrl+v命令可以进行批量的修改。但是在操作的过程中我发现这个命令好像无法批量添加空格。没招了。
+下午的时候不忙，遂在群里提出了这个问题，力哥给了回复，利用vim的宏功能（教程）。
+试了一下，果断实现了这个需求，简单实用很不错。下面简单介绍一下：
+##正题 打开vim，输入一下内容：
+aaa
+bbb
+ccc
+ddd
+录入宏：
+1.按下esc进入“指令模式” 。
+2.按下q表示即将进入宏录入，之后按下任意a表示名字为‘a’的宏。
+3.然后进行你想录入的操作，我这里是想在每行的末尾添加两个空格，所以我进行的操作是：
+A #在行尾插入
+space,space #两下空格，在行尾插入两行空格
+esc #进入“指令模式”
+j #光标移至下一行
+完成，最后重要的一步，退出宏录制，很简单，键入q。
+到此，我需要录制的宏已经完成，接下来只需要重复执行这个宏就能实现我的需求。
+我这里需要执行4次，我只要输入4@a，便可将名为2的宏执行4次。其中@之前是次数，@之后是宏的名字。 是不是很简单。
+##拾遗 普通人的编辑利器——Vim
+Vim的三种模式</description></item><item><title>VIM 插件</title><link>https://petrie.github.io/posts/2015-03-25-my-vim-plugin/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2015-03-25-my-vim-plugin/</guid><description>NERDTree
+neocomplcache</description></item><item><title>Vim 进阶1</title><link>https://petrie.github.io/posts/2013-08-29-vim-advanced-1/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2013-08-29-vim-advanced-1/</guid><description>##Vim 进阶[1]##
+:g/pattern 寻找（移动）文件中最后一次出现pattern的地方。
+:g/pattern/p 寻找并显示文件中所有包含pattern的行
+:x 写入文件同时离开编辑器。只有文件被修改过时才会写入。
+:g/pattern/s/old/new/g这种语法让你搜索一个模式，在找到包含模式的某一行时，对另外一个字符做替换。
+vaw 选中当前单词
+vawp 选中当前单词并用寄存器中的覆盖</description></item><item><title>Vim快速选中、删除、复制引号或括号中的内容</title><link>https://petrie.github.io/posts/2014-03-06-vim-copy-mv-delete/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2014-03-06-vim-copy-mv-delete/</guid><description>http://www.Linuxsong.org/2010/09/vim-quick-select-copy-delete/</description></item><item><title>利用CentOS.ISO配置本地yum源</title><link>https://petrie.github.io/posts/2012-09-18-linux-yum-iso/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-09-18-linux-yum-iso/</guid><description>#扯淡# 公司的网络要用代理，许多非常cool的东西都玩不了，真垃圾。
+组长让搞一个LNMP的教程。
+上次在开发机上乱搞，把LNMP搞乱了，程序不能运行，调了好久，最后只好请来别的组的一位大神才解决。谁让自己是LNMP菜鸟呢!组里也都是做.Net的
+从此我就不敢再在开发机上乱弄了。 （这事才几天，缓缓再说）。
+开发联网上网不用通过代理，用起来爽啊，装点啥直接yum。
+这几天还得把LNMP教程弄出来。
+用不了开发机，只能在本机折腾了，先装Mysql，源码安装要用到cmake，不能用yum（不能上网），自己找依赖吧。
+本想依赖最多有1，2层吧，可是事实不是这样，各种深度，各种广度啊。果断改变策略。想起以前在uplooking学Linux的时候老师曾教过本地yum配置。所幸试一试。
+废话了这么多终于要进入正题了&amp;hellip;
+#正题# 1.将下好的dvdiso复制到虚拟机的 /home/petrie/ 下并重命名为centos.iso。此时iso的目录为/home/petrie/centos.iso
+2.将dvdiso文件绑定到目录/mnt/centos_iso
+mkdir /mnt/centos_iso
+mount -o loop /home/petrie/centos.iso /mnt/centos_iso
+好了，现在光盘中的rpm都可以用来安装了，但是这能安装那些没有依赖的，有依赖的要自行处理，接下来要安装的东西后面会用到，十分幸运，她没有依赖
+3.安装配置软件
+cd /mnt/centos_iso/CentOS
+rpm -ivh createrepo-0.4.11-3.el5.noarch.rpm
+4.运行createrepo
+cd /mnt
+createrepo ./ 这个过程挺长的2，3分钟吧
+5.修改配置
+cd /etc/yum.repos.d/
+vim dvdiso.repo
+在dvdiso.repo中写入以下内容：
+[DVDISO]
+name=DVD ISO
+baseurl=file:///mnt/
+enabled=1
+gpgcheck=0
+注意：步骤5 需要将/etc/yum.repos.d/下的文件清空，也就是说/etc/yum.repos.d/下只能有dvdiso.repo文件
+这就好了，执行 yum clean all;yum list,执行成功则说明配置成功了。 赶紧装个软件试试吧~ pretty cool！ huh~</description></item><item><title>字符编码故事的笔记</title><link>https://petrie.github.io/posts/2012-10-10-char-encode/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-10-10-char-encode/</guid><description>字符编码故事的笔记(很久很久以前) gb2312: 一个小于127的字符的意义与原来相同，但两个大于127的字符连在一起时，就表示一个汉字，前面的一个字节（他称之为高字节）从0xA1用到0xF7，后面一个字节（低字节）从0xA1到0xFE，这样我们就可以组合出大约7000多个简体汉字了。在这些编码里，我们还把数学符号、罗马希腊的字母、日文的假名们都编进去了，连在 ASCII 里本来就有的数字、标点、字母都统统重新编了两个字节长的编码，这就是常说的&amp;quot;全角&amp;quot;字符，而原来在127号以下的那些就叫&amp;quot;半角&amp;quot;字符了。 中国人民看到这样很不错，于是就把这种汉字方案叫做 &amp;ldquo;GB2312&amp;rdquo;。
+GBK: GB2312 是对 ASCII 的中文扩展。 但是中国的汉字太多了，我们很快就就发现有许多人的人名没有办法在这里打出来，特别是某些很会麻烦别人的国家领导人。于是我们不得不继续把 GB2312 没有用到的码位找出来老实不客气地用上。 后来还是不够用，于是干脆不再要求低字节一定是127号之后的内码，只要第一个字节是大于127就固定表示这是一个汉字的开始，不管后面跟的是不是扩展字符集里的内容。结果扩展之后的编码方案被称为 GBK 标准，GBK 包括了 GB2312 的所有内容，同时又增加了近20000个新的汉字（包括繁体字）和符号。
+GB18030:后来少数民族也要用电脑了，于是我们再扩展，又加了几千个新的少数民族的字，GBK 扩成了 GB18030。
+UNICODE:UNICODE 开始制订时，计算机的存储器容量极大地发展了，空间再也不成为问题了。于是 ISO 就直接规定必须用两个字节，也就是16位来统一表示所有的字符，对于ascii里的那些“半角”字符，UNICODE 包持其原编码不变，只是将其长度由原来的8位扩展为16位，而其他文化和语言的字符则全部重新统一编码。由于&amp;quot;半角&amp;quot;英文符号只需要用到低8位，所以其高8位永远是0，因此这种大气的方案在保存英文文本时会多浪费一倍的空间。
+如前所述，UNICODE 是用两个字节来表示为一个字符，他总共可以组合出65535不同的字符，这大概已经可以覆盖世界上所有文化的符号。</description></item><item><title>很久很久以前，字符编码的故事</title><link>https://petrie.github.io/posts/2012-10-24-character-encode/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-10-24-character-encode/</guid><description>Ascii码————要从很久很久以前说起
+很久很久以前，有一群人，他们决定用8个可以开合的晶体管来组合成不同的状态，以表示世界上的万物。他们看到8个开关状态是好的，于是他们把这称为&amp;quot;字节&amp;quot;。 再后来，他们又做了一些可以处理这些字节的机器，机器开动了，可以用字节来组合出很多状态，状态开始变来变去。他们看到这样是好的，于是它们就这机器称为&amp;quot;计算机&amp;quot;。 开始计算机只在美国用。八位的字节一共可以组合出256(2的8次方)种不同的状态。 他们把其中的编号从0开始的32种状态分别规定了特殊的用途，一但终端、打印机遇上约定好的这些字节被传过来时，就要做一些约定的动作。遇上00x10, 终端就换行，遇上0x07, 终端就向人们嘟嘟叫，例好遇上0x1b, 打印机就打印反白的字，或者终端就用彩色显示字母。他们看到这样很好，于是就把这些0x20以下的字节状态称为&amp;quot;控制码&amp;quot;。 他们又把所有的空格、标点符号、数字、大小写字母分别用连续的字节状态表示，一直编到了第127号，这样计算机就可以用不同字节来存储英语的文字了。大家看到这样，都感觉很好，于是大家都把这个方案叫做 ANSI 的&amp;quot;Ascii&amp;quot;编码（American Standard Code for Information Interchange，美国信息互换标准代码）。
+Ascii扩展字符集————就像建造巴比伦塔，世界各地的人都开始使用计算机 当时世界上所有的计算机都用同样的ASCII方案来保存英文文字。 后来，就像建造巴比伦塔一样，世界各地的都开始使用计算机，但DB是很多国家用的不是英文，他们的字母里有许多是ASCII里没有的，为了可以在计算机保存他们的文字，他们决定采用127号之后的空位来表示这些新的字母、符号，还加入了很多画表格时需要用下到的横线、竖线、交叉等形状，一直把序号编到了最后一个状态255。从128到255这一页的字符集被称&amp;quot;扩展字符集&amp;quot;。从此之后，贪婪的人类再没有新的状态可以用了，美帝国主义可能没有想到还有第三世界国家的人们也希望可以用到计算机吧！
+GB2312————智慧的中国人名开始使用计算机了 等中国人们得到计算机时，已经没有可以利用的字节状态来表示汉字，况且有6000多个常用汉字需要保存呢。但是这难不倒智慧的中国人民，我们不客气地把那些127号之后的奇异符号们直接取消掉, 规定：一个小于127的字符的意义与原来相同，但两个大于127的字符连在一起时，就表示一个汉字，前面的一个字节（他称之为高字节）从0xA1用到0xF7，后面一个字节（低字节）从0xA1到0xFE，这样我们就可以组合出大约7000多个简体汉字了。在这些编码里，我们还把数学符号、罗马希腊的字母、日文的假名们都编进去了，连在 ASCII 里本来就有的数字、标点、字母都统统重新编了两个字节长的编码，这就是常说的&amp;quot;全角&amp;quot;字符，而原来在127号以下的那些就叫&amp;quot;半角&amp;quot;字符了。 中国人民看到这样很不错，于是就把这种汉字方案叫做 &amp;ldquo;GB2312&amp;rdquo;。GB2312 是对 ASCII 的中文扩展。
+GBK————中国的汉字太多了 但是中国的汉字太多了，我们很快就就发现有许多人的人名没有办法在这里打出来，特别是某些很会麻烦别人的国家领导人。于是我们不得不继续把 GB2312 没有用到的码位找出来老实不客气地用上。 后来还是不够用，于是干脆不再要求低字节一定是127号之后的内码，只要第一个字节是大于127就固定表示这是一个汉字的开始，不管后面跟的是不是扩展字符集里的内容。结果扩展之后的编码方案被称为 GBK 标准，GBK 包括了 GB2312 的所有内容，同时又增加了近20000个新的汉字（包括繁体字）和符号。
+GB18030————少数民族也开始用电脑了
+后来少数民族也要用电脑了，于是我们再扩展，又加了几千个新的少数民族的字，GBK 扩成了 GB18030。从此之后，中华民族的文化就可以在计算机时代中传承了。
+DBC
+中国的程序员们看到这一系列汉字编码的标准是好的，于是通称他们叫做 &amp;ldquo;DBCS&amp;rdquo;（Double Byte Charecter Set 双字节字符集）。
+Unicode————大天使加百列出现 在DBCS系列标准里，最大的特点是两字节长的汉字字符和一字节长的英文字符并存于同一套编码方案里，因此他们写的程序为了支持中文处理，必须要注意字串里的每一个字节的值，如果这个值是大于127的，那么就认为一个双字节字符集里的字符出现了。那时候凡是受过加持，会编程的计算机僧侣们都要每天念下面这个咒语数百遍： &amp;ldquo;一个汉字算两个英文字符！一个汉字算两个英文字符……&amp;rdquo; 因为当时各个国家都像中国这样搞出一套自己的编码标准，结果互相之间谁也不懂谁的编码，谁也不支持别人的编码，连大陆和台湾这样只相隔了150海里，使用着同一种语言的兄弟地区，也分别采用了不同的 DBCS 编码方案——当时的中国人想让电脑显示汉字，就必须装上一个&amp;quot;汉字系统&amp;quot;，专门用来处理汉字的显示、输入的问题，但是那个台湾的愚昧封建人士写的算命程序就必须加装另一套支持 BIG5 编码的什么&amp;quot;倚天汉字系统&amp;quot;才可以用，装错了字符系统，显示就会乱了套！这怎么办？而且世界民族之林中还有那些一时用不上电脑的穷苦人民，他们的文字又怎么办？ 真是计算机的巴比伦塔命题啊！ 正在这时，大天使加百列及时出现了——一个叫 ISO （国际标谁化组织）的国际组织决定着手解决这个问题。他们采用的方法很简单：废了所有的地区性编码方案，重新搞一个包括了地球上所有文化、所有字母和符号的编码！他们打算叫它&amp;quot;Universal Multiple-Octet Coded Character Set&amp;quot;，简称 UCS, 俗称 &amp;ldquo;UNICODE&amp;rdquo;。 UNICODE 开始制订时，计算机的存储器容量极大地发展了，空间再也不成为问题了。于是 ISO 就直接规定必须用两个字节，也就是16位来统一表示所有的字符，对于ascii里的那些“半角”字符，UNICODE 包持其原编码不变，只是将其长度由原来的8位扩展为16位，而其他文化和语言的字符则全部重新统一编码。由于&amp;quot;半角&amp;quot;英文符号只需要用到低8位，所以其高8位永远是0，因此这种大气的方案在保存英文文本时会多浪费一倍的空间。 这时候，从旧社会里走过来的程序员开始发现一个奇怪的现象：他们的strlen函数靠不住了，一个汉字不再是相当于两个字符了，而是一个！是的，从 UNICODE 开始，无论是半角的英文字母，还是全角的汉字，它们都是统一的&amp;quot;一个字符&amp;quot;！同时，也都是统一的&amp;quot;两个字节&amp;quot;，请注意&amp;quot;字符&amp;quot;和&amp;quot;字节&amp;quot;两个术语的不同，“字节”是一个8位的物理存贮单元，而“字符”则是一个文化相关的符号。在UNICODE 中，一个字符就是两个字节。一个汉字算两个英文字符的时代已经快过去了。 从前多种字符集存在时，那些做多语言软件的公司遇上过很大麻烦，他们为了在不同的国家销售同一套软件，就不得不在区域化软件时也加持那个双字节字符集咒语，不仅要处处小心不要搞错，还要把软件中的文字在不同的字符集中转来转去。UNICODE 对于他们来说是一个很好的一揽子解决方案，于是从 Windows NT 开始，MS 趁机把它们的操作系统改了一遍，把所有的核心代码都改成了用 UNICODE 方式工作的版本，从这时开始，WINDOWS 系统终于无需要加装各种本土语言系统，就可以显示全世界上所有文化的字符了。 但是，UNICODE 在制订时没有考虑与任何一种现有的编码方案保持兼容，这使得 GBK 与UNICODE 在汉字的内码编排上完全是不一样的，没有一种简单的算术方法可以把文本内容从UNICODE编码和另一种编码进行转换，这种转换必须通过查表来进行。 如前所述，UNICODE 是用两个字节来表示为一个字符，他总共可以组合出65535不同的字符，这大概已经可以覆盖世界上所有文化的符号。</description></item><item><title>微趴小任务</title><link>https://petrie.github.io/posts/2015-09-19-mirco-task/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2015-09-19-mirco-task/</guid><description>##微趴小任务：倒入北京QQ校友到微信群##
+沟通示例：
+hi，我是民大计算机08的刘朋飞。民大北京校友会的志愿者~ 我们在组建民大校友微信群。后面可能组织些微趴、校友会等的线下活动。现在北京微信群里近300人，98级-12级的同学都有。学长or学姐or学弟or学妹是否在北京呢？我加您微信，拉您进群。 如果在上海，深圳 也可以拉到对应群里（见二维码）。
+以下3个QQ群：
+大连民大在北京 90617726 民大内推 ② 252929118 民大内推 ① 177920791
+分工：
+王妍 QQ号1，2，,3打头的 杨静莲 QQ号4，5，6打头的 刘梦园 QQ号7，8，9大头的</description></item><item><title>易忘vim命令1</title><link>https://petrie.github.io/posts/2012-09-19-useful-vim-1/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-09-19-useful-vim-1/</guid><description>%: **[括号匹配]**可以让光标从它当前所在的括号跳转到与它相匹配的括号上去 n+空格键 ： 那个n表示【数字】，例如20。按下数字后在按空格键盘，光标会向有一栋这一行的n个字符。例如20+空格 则光标会向后面移动20个字符距离。
+0：移动到这一行的最前面字符处
+$：移动到这一行的最后面字符处
+H：光标移动到这个屏幕最上方那一行的第一个字符
+M：光标移动到这个屏幕的中央那一行的第一个字符
+L：光标移动到这个屏幕的最下方那一行的第一个字符__
+G：移动到这个文档的最后一行。
+n+回车键 ：n为数字。光标向下移动n行(常用)
+？word：向光标之上寻找一个字符串名称为word的字符串。
+：n1,n2s/word1/word2/g：n1与n2为数字。在第n1与n2行之间寻找word1这个字符串，并将该字符串取代为word2！举例来说，在100到200行之间搜索vbird并取代为VBIRD则：[:100,200s/vbrid/VBIRD/g]
+1,$s/word1/word2/g：从第一行到最后一行寻找word1字符串，并替换
+1,$s/word1/word2/gc :需要确认的替换。
+删除、复制与黏贴 nx：n为数字，连续向后删除n个字符。举例来说，我要连续删除10个字符【10x】。
+ndd：n为数字。删除光标所在的向下n列，例如20dd则是删除20列。
+d1G：删除光标所在到第一行的所有数据。
+dG：删除光标所在到最后一行的数据 d$：删除游标所在处，到该行的最后一个字符
+d0：删除游标所在处到行首的字符
+nyy，y1G，yG，y0，y$参考上文。
+p,P：p为将已复制的数据在光标下一行贴上，P则为贴在游标上一行！
+J：将光标所在列与下一列的数据结合成同一列。
+**c：重复删除多个数据，例如向下删除10行【10cj】**
+u：重复前一个动作。（常用）
+Ctrl+r：重做上一个动作。（常用）
+.：重复前一个动作，如果你想要重复删除，重复贴上等等动作。</description></item><item><title>易忘vim命令2</title><link>https://petrie.github.io/posts/2012-09-19-useful-vim-2/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-09-19-useful-vim-2/</guid><description>ZZ：这是大写的Z，若档案没有改动，则不储存离开，若档案已经被更动过，则存储后离开！
+：w [filename] 将编辑的数据储存成另一个档案
+：r [filename] 在编辑数据中，读入另一个档案的数据。
+：n1，n2 w [filename] 将n1到n2的内容储存成filename这个档案
+：!command 暂时离开vi到指令模式下执行command的显示结果！例如[:!ls /home]即可在vi当中查看/home底下以ls输出的档案信息。
+##区块选择## v：字符选择，会将光标经过的地方反白选择！
+V：行选择，会将光标经过的行反白选择！
+Ctrl+v：区块选择，可用长方形的方式选择资料
+y： 将反白的地方复制起来
+d： 将反白的地方删除掉
+##多档案编辑##
+：n 编辑下一个档案
+：N 编辑上一个档案
+：files 列出目前这个vim开启的所有档案
+##多窗口功能##
+：sp /etc/hosts 在分割窗口中打开新文件
+ctrl+w+↑/j及ctrl+w+↓/j 在窗口之间移动：按键的按法是：先按下ctrl不放，再按下w后放开所有的按键，然后在按下j或向下箭头，则光标可移动到下方的窗口。
+ctrl+w+q：关闭下方的窗口
+##vim环境设定与记录：~/.vimrc,~/viminfo##
+：set hlsearch ：set nohlseach 设置搜索反白 ：set autoindent ：set noautoindent 是否自动缩排 ：set backup 是否自动储存备份档 ：set all 显示目前所有环境参数设定值。</description></item><item><title>本质知识</title><link>https://petrie.github.io/posts/2012-11-12-about-life/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-11-12-about-life/</guid><description>本质知识
+中国教育界最无知的理念-- 不能输在起跑线上！现在多如牛毛的早教机构，就是用这句话来招揽生意。但是，只有短跑才拼起跑！你见过那个马拉松比赛有人抢跑的？ 或许我们根本就不该考虑的太过长久，因为对于生命这个函数来说，他的未知数未免还有太多！如此，我也不用去纠结，纠结面对当前计算机界这浩如烟海的知识，我该学哪一种！我想这里的原则应该就是学习当下做需要的吧，而不应计划的太久。对我来说，最近需要接触js+php的项目，自然我需要去熟悉js+php相关的技术。但另一方面来说，在这些知识中，是否存在某些不变的本质的东西可以让我们学习终身。答案是肯定的，对于程序员来说:
+底层的知识永不过时；算法和数据结构永不过时；基本的程序设计理论永远都不过时；良好的编码习惯永远都不过时；分析问题和解决问题的能力永远都不过时；强大的学习能力和旺盛的求知欲永远都不过时；你大脑的思维方式永远都不过时。（（摘自《暗时间》。）） 毫无疑问，这些是需要我们用一生时间去学习的。(&amp;mdash;-灵感来自《自私的基因》：如果他至今还没有抱定宗旨要在哪一方面成为专家，那么我要奉劝他考虑一下我所从事的专业——动物学。）
+在总结出以上之前，每每我思考自己技术路线的时候，在不同的心情的时候，我会表现出两种状态，心情好的情况下，我会觉得这些技术都如此简单，完全可以一天搞明白一个，完全没什么好担心的。这种情况常常出现在刚刚看完一些有鸡血成分的励志书之后，那些书长远来看虽并无太大意义，但当作鸡血用来短期激励斗志，还是有奇效的。罗永浩在他去面试新东方之前，除了购买了少数的英文图书之外，随之一起的还有两三百本励志书。每当他看英语看不下去的时候，就找来一本看看，很快就能恢复斗志。可是为什么要买那么多呢？按照罗老师的说法，这些励志书只有在第一次看的时候会有激励斗志的效果，在看第二遍的时候就没有了。这种感觉应该就像看笑话吧，第一次看的时候会笑，在看的时候因为知道了结果，难免就没那么好笑了。(跑题了)
+两种状态前一种就是上面的情况了。第二种产生的情景是这样的，这天，我脑子抽经起了个大早，嘻嘻刷刷，去到公司合适没有计划的看一下“技术”，写写简单的代码什么的。中午12点左右和同事一起去吃饭，带头大哥带我们去了一个离公司很远的地方，吃完饭一点钟。没时间午休&amp;hellip; 早晨早起，中午没休息，下午的状态可想而知。等到7点下班，我自己一个人去吃饭的时候。好了，拖着疲惫的身体我开始思考人生了&amp;hellip;. 我就想啊，这么多技术我到底该搞哪一种呢，每种都那么难。什么JavaScript啊,犀牛书是那么厚；什么Mysql啊，源码是那么错综复杂，等等等等一大堆，然后我就意志消沉，抑郁一晚上。
+在这之前，我从没考虑过自己为什么会这样。现在好了，我将知识分为两种，一种是本质知识，需要用一辈子去学，做个计划，每周进步一点点，这就够了；另外一种，可以马上拿来用的知识，这些知识的量比前一种，内容十分庞大，对于这样的知识，更多的应该是用到的时候去快速学习。
+好了，纠结那么久的问题算是暂时解决了（为什么要有暂时，因为这种想法我现在想得通，谁知道过几天我想不想的通呢）。剩下的问题如何区别知识是否是本质的。</description></item><item><title>深入浅出'Git commit --amend'</title><link>https://petrie.github.io/posts/2016-06-23-git-commit-amend/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-23-git-commit-amend/</guid><description>Git能够提供悔棋的奥秘在于Git的reset命令。Git commit --amend 可以理解为Git reset 的alias。
+Git commit --amend ‘this is amend commit’ 等价于
+Git reset --soft HEAD^</description></item><item><title>读书笔记-暗时间</title><link>https://petrie.github.io/posts/2012-11-05-readnotes-dark-time/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-11-05-readnotes-dark-time/</guid><description>程序员的永不过时
+底层的知识永不过时；算法和数据结构永不过时；基本的程序设计理论永远都不过时；良好的编码习惯永远都不过时；分析问题和解决问题的能力永远都不过时；强大的学习能力和旺盛的求知欲永远都不过时；你大脑的思维方式永远都不过时。
+有选择的阅读
+有人觉得我读书很快，其实我只是有选择的阅读。 这里体现在两个地方：一是选择自己感兴趣的优先阅读，而是对于技术性较弱的章节粗略的读。
+对自制力说不
+其实，在大学期间，最不缺的就是业余时间，最缺的就是专注精神，非凡的注意力早就非凡的专家。而生活中有太多分散注意力的因素：游戏，篮球，选修课，女朋友&amp;hellip;要想集中注意力对一个单一的目标猛下功夫其实还是相当有难度的。这个难度并非来自自制力，如果一个人要靠自制力去强迫自己不收干扰，那只能说还是寻常人（modiocre），真正的效率源自内心对一个东西的热忱，也就是我么俗称的追求，这时候从表层意识到深层意识都关注在这件事情上，脑细胞高度活跃，才能创造出最大效率。
+如何在阅读一本书之前就能获得对一本书质量的大致评估
+1. 看作者 2. 看目录和简介，目录结构是否清晰（没有装神弄鬼） 3. 看Amazon评价，更要看打分低的人是怎么说的，因为小众意见有可能来自那些正真懂行的人 4. 看样章，表达是否清晰，论证是否严谨，内容是否深刻。 学习一样知识，必须问自己三个重要问题：
+1. 他的本质是什么 2. 他的第一原则是什么 3. 他的只是结构是怎样的 根据主题来查阅资料，而不是根据资料来查阅主题
+以前读书的时候是一本一本地读，眼里看到的是一本一本的书，现在则是一章，甚至一节一节的读，眼中看到的不是一本一本的书，而是一堆一堆的章节，一个一个的主题，按照逐题来阅读，你会发现读的时候不再是老老实实地一本书看完看另一本，而是非常频繁的从一本书跳到另一本书，从一处资料跳到另一处资料，从而获得多个不同的人对同一主题是如何讲解的。
+反省自己的思维过程
+时常反省和注意自己的思维过程。尤其是遇到无法理解和解决的问题之后，最休要将原先的思维过程回顾一遍，看看到底是那个环节被阻塞住了妨碍了理解，问题到底出在哪里，并分析以后需要加强那方面的思维习惯，才能够不在同样或类似的时候被绊住。对此，将思维的大致脉络写下来是一个很好 的习惯。</description></item></channel></rss>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>samba on My New Hugo Site</title><link>https://petrie.github.io/tags/samba/</link><description>Recent content in samba on My New Hugo Site</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://petrie.github.io/tags/samba/index.xml" rel="self" type="application/rss+xml"/><item><title>Linux下搭建Samba服务器</title><link>https://petrie.github.io/posts/2013-02-18-linux-samba/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2013-02-18-linux-samba/</guid><description>##Linux下搭建Samba服务器##
+安装文件
+三种方式获取安装文件
+1. 网络下载
+在http://rpmfind.net搜索&amp;quot;samba&amp;quot;,下载对应rpm文件
+2. 安装光盘
+通过mount绑定到系统，然后拷贝使用详见
+3. iso文件
+通过mount绑定到系统，然后拷贝使用详见
+安装命令
+采用RPM方式安装。
+rpm -ivh samba_版本信息.rpm
+配置Samba
+配置文件位置: /etc/samba/smb.conf</description></item></channel></rss>

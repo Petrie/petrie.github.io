@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>MySQL on My New Hugo Site</title><link>https://petrie.github.io/tags/mysql/</link><description>Recent content in MySQL on My New Hugo Site</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sun, 04 Jun 2017 20:55:12 +0000</lastBuildDate><atom:link href="https://petrie.github.io/tags/mysql/index.xml" rel="self" type="application/rss+xml"/><item><title>PHP设置连接mysql超时时间</title><link>https://petrie.github.io/posts/2017-06-04-php-mysql-timeout/</link><pubDate>Sun, 04 Jun 2017 20:55:12 +0000</pubDate><guid>https://petrie.github.io/posts/2017-06-04-php-mysql-timeout/</guid><description>&lt;p>本文将分别介绍PHP的mysql扩展, mysqli扩展, mysql_pdo扩展,mysqlnd扩展和libmysql 这些名词的含义。以及他们之间的关系。最后再介绍如何配置mysql的超时时间。&lt;/p>
+&lt;h1 id="一mysqlmysqlimysql_pdomysqlnd扩展">一、mysql,mysqli,mysql_pdo,mysqlnd扩展&lt;/h1>
+&lt;p>当考虑连接到MySQL数据库服务器的时候，有三种主要的API可供选择：&lt;/p>
+&lt;ul>
+&lt;li>PHP的MySQL扩展&lt;/li>
+&lt;li>PHP的mysqli扩展&lt;/li>
+&lt;li>PHP数据对象(PDO)&lt;/li>
+&lt;/ul>
+&lt;p>三者都有各自的优缺点。下面的讨论就是为了对每种API的关键方面给出一个简短的介绍。&lt;/p></description></item><item><title>MySQL datetime vs timestamp</title><link>https://petrie.github.io/posts/2016-07-23-mysql-datetime-vs-timestamp/</link><pubDate>Sat, 23 Jul 2016 13:03:01 +0000</pubDate><guid>https://petrie.github.io/posts/2016-07-23-mysql-datetime-vs-timestamp/</guid><description>MySQL 时间类型最佳实践 通常建立数据库表的时，最常出现的两个字段是，数据的创建时间和更新时间。这篇文章为大家整理出关于这两个字段数据类型选择（timestamp vs datetime）的推荐实践。
+首先介绍下两种数据类型的试用场景
+timestamp timestamp通常用来追踪数据记录的变化时间，通常它被设置成跟着字段的更新而更新 DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 。如果你只是想存储某个具体的时间值，datetime字段更合适。
+它具有以下特点
+它以UTC时间格式存储 可以由Mysql自动初始化和更新 可存储范围 1970-01-01 00:00:01 UTC to 2038-01-19 03:14:07 UTC datetime datetime字段可以很方便的通过SELECT UNIX_TIMESTAMP(my_datetime) 转换为Linux 时间戳。
+它具有以下特点
+存储内容，所存即所得 可存储范围1000-01-01 00:00:00 to 9999-12-31 23:59:59 可以指定日和月字段为0值 某些情况下可以设置默认值now()。但是此种方式并不推荐 以上 实践一
+CREATE TABLE ts ( id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL, created_at DATETIME , changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ); 实践一的优点</description></item><item><title>LNMP环境搭建（二） 编译安装MySQL</title><link>https://petrie.github.io/posts/2012-10-25-lnmp-second-mysql/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-10-25-lnmp-second-mysql/</guid><description>编译安装MySQL
+1. 创建组和用户
+groupadd Mysql
+useradd -g Mysql Mysql
+2. 解压源码包并进入
+tar zxvf Mysql-5.5.3-m3.tar.gz
+cd Mysql-5.5.3-m3
+3. 配置cmake编译参数
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/Mysql \
+-DSYSCONFDIR=/usr/local/Mysql/etc \
+-DMYSQL_DATADIR=/usr/local/Mysql/data \
+-DMYSQL_TCP_PORT=3306 \
+-DMYSQL_UNIX_ADDR=/tmp/Mysqld.sock \
+-DMYSQL_USER=Mysql \
+-DEXTRA_CHARSETS=all \
+-DWITH_READLINE=1 \
+-DWITH_SSL=system \
+-DWITH_EMBEDDED_SERVER=1 \
+-DENABLED_LOCAL_INFILE=1 \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DWITHOUT_PARTITION_STORAGE_ENGINE=2
+4. 编译安装
+make &amp;amp;&amp;amp; make install
+5. 将安装目录极其子目录的所属组和拥有者设置为Mysql:Mysql
+chown -R Mysql:Mysql /usr/local/Mysql
+cd ..
+6. 以Mysql用户帐号的身份建立数据表</description></item></channel></rss>

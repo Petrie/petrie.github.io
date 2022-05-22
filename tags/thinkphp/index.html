@@ -1,0 +1,24 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>ThinkPHP | My New Hugo Site</title><meta name=viewport content="width=device-width,minimum-scale=1"><meta name=description content><meta name=generator content="Hugo 0.99.1"><meta name=robots content="noindex, nofollow"><link rel=stylesheet href=/ananke/css/main.min.css><link href=/tags/thinkphp/index.xml rel=alternate type=application/rss+xml title="My New Hugo Site"><link href=/tags/thinkphp/index.xml rel=feed type=application/rss+xml title="My New Hugo Site"><meta property="og:title" content="ThinkPHP"><meta property="og:description" content><meta property="og:type" content="website"><meta property="og:url" content="https://petrie.github.io/tags/thinkphp/"><meta itemprop=name content="ThinkPHP"><meta itemprop=description content><meta name=twitter:card content="summary"><meta name=twitter:title content="ThinkPHP"><meta name=twitter:description content></head><body class="ma0 avenir bg-near-white"><header><div class="pb3-m pb6-l bg-black"><nav class="pv3 ph3 ph4-ns" role=navigation><div class="flex-l justify-between items-center center"><a href=/ class="f3 fw2 hover-white no-underline white-90 dib">My New Hugo Site</a><div class="flex-l items-center"><div class=ananke-socials></div></div></div></nav><div class="tc-l pv3 ph3 ph4-ns"><h1 class="f2 f-subheadline-l fw2 light-silver mb0 lh-title">ThinkPHP</h1></div></div></header><main class=pb7 role=main><article class="cf pa3 pa4-m pa4-l"><div class="measure-wide-l center f4 lh-copy nested-copy-line-height nested-links mid-gray"><p>Below you will find pages that utilize the taxonomy term “ThinkPHP”</p></div></article><div class="mw8 center"><section class="flex-ns flex-wrap justify-around mt5"><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2012-11-02-configure-nginx-pathinfo/ class="link black dim">Nginx配置PATHINFO</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">最近在学习php，《PHP和MySQL Web开发》零零碎碎的算是看完了，讲了一下基础的东西，对于入门是足够了。前几天开始些项目，是在先前别人的基础上写的，同时有事两个人一起写。完成之后看了看，代码太乱了，包括代码结构和命名规范。遂决定找点着方便的资料。
+在网上搜来搜去，找到了篇挺不错的PHP框架（ThinkPHP）教程：http://www.thinkphp.cn/info/155.html 着实还不错，推荐学习PHP的同学看看。
+这篇教程的默认环境是wamp的，由于我用的是Nginx，在学习第二篇的时候就遇到了问题。ThinkPHP支持的URL模式：PATHINFO Nginx默认配置是不支持的。本以为是自己ThinkPHP环境配置的问题，后来删了所有的相关文件（我的一贯作风&ndash;屡试不爽），重新配置ThinkPHP环境，可是还是同样的报404错误。这样的话只能是Nginx和php配置的问题了。
+URL首先是通过Nginx解析的，先从Nginx下手。猜想Nginx是不是不支持ThinkPHP的PATHINFO呢。于是百度一下，便一目了然了。
+试了几篇博文的方法，最后终于弄好了。
+废话结束
+打开Nginx的配置文件nginx.conf
+在server中加入一下配置：
+location ~ .php {
+root d:/ThinkPHP/;
+fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+fastcgi_pass 127.0.0.1:9000;
+fastcgi_index index.php;
+include fastcgi_params;
+#pathinfo support
+set $real_script_name $fastcgi_script_name;
+set $path_info &ldquo;&rdquo;;
+if ( $fastcgi_script_name ~ &ldquo;^(.+?.php)(/.+)$&rdquo;){
+set $real_script_name $1;
+set $path_info $2;
+} fastcgi_param SCRIPT_NAME $real_script_name;
+fastcgi_param PATH_INFO $path_info;
+}
+需要注意的是那个if判断语句，在(的前后都必须有空格，否则Nginx会报配置语法错误。</div></div></div></div></section></div></main><footer class="bg-black bottom-0 w-100 pa3" role=contentinfo><div class="flex justify-between"><a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href=https://petrie.github.io/>&copy; My New Hugo Site 2022</a><div><div class=ananke-socials></div></div></div></footer></body></html>

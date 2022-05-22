@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>php-extension on My New Hugo Site</title><link>https://petrie.github.io/tags/php-extension/</link><description>Recent content in php-extension on My New Hugo Site</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 29 Mar 2018 03:55:12 +0000</lastBuildDate><atom:link href="https://petrie.github.io/tags/php-extension/index.xml" rel="self" type="application/rss+xml"/><item><title>PHP扩展开发－自动生成扩展骨架</title><link>https://petrie.github.io/posts/2018-03-29-first-php-extension/</link><pubDate>Thu, 29 Mar 2018 03:55:12 +0000</pubDate><guid>https://petrie.github.io/posts/2018-03-29-first-php-extension/</guid><description>&lt;p>PHP扩展编译有两种方式&lt;/p>
+&lt;ul>
+&lt;li>作为一个可装载模块或者DSO（动态共享对象）&lt;/li>
+&lt;li>静态编译到PHP&lt;/li>
+&lt;/ul>
+&lt;p>静态编译的方式直接和PHP编译到一起，步骤比较简单，但每次变更代码都要编译这个PHP代码，非常耗时，所以这里采用第二种方式&lt;/p>
+&lt;h4 id="开发环境">开发环境&lt;/h4>
+&lt;p>本文脚本命令仅在以下环境测试成功&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>操作系统：CentOS 6.9
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>PHP版本：PHP-7.1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="安装开发工具包">安装开发工具包&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>yum groupinstall -y &lt;span style="color:#e6db74">&amp;#39;Development Tools&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item></channel></rss>

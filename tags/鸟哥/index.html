@@ -1,0 +1,43 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>鸟哥 | My New Hugo Site</title><meta name=viewport content="width=device-width,minimum-scale=1"><meta name=description content><meta name=generator content="Hugo 0.99.1"><meta name=robots content="noindex, nofollow"><link rel=stylesheet href=/ananke/css/main.min.css><link href=/tags/%E9%B8%9F%E5%93%A5/index.xml rel=alternate type=application/rss+xml title="My New Hugo Site"><link href=/tags/%E9%B8%9F%E5%93%A5/index.xml rel=feed type=application/rss+xml title="My New Hugo Site"><meta property="og:title" content="鸟哥"><meta property="og:description" content><meta property="og:type" content="website"><meta property="og:url" content="https://petrie.github.io/tags/%E9%B8%9F%E5%93%A5/"><meta itemprop=name content="鸟哥"><meta itemprop=description content><meta name=twitter:card content="summary"><meta name=twitter:title content="鸟哥"><meta name=twitter:description content></head><body class="ma0 avenir bg-near-white"><header><div class="pb3-m pb6-l bg-black"><nav class="pv3 ph3 ph4-ns" role=navigation><div class="flex-l justify-between items-center center"><a href=/ class="f3 fw2 hover-white no-underline white-90 dib">My New Hugo Site</a><div class="flex-l items-center"><div class=ananke-socials></div></div></div></nav><div class="tc-l pv3 ph3 ph4-ns"><h1 class="f2 f-subheadline-l fw2 light-silver mb0 lh-title">鸟哥</h1></div></div></header><main class=pb7 role=main><article class="cf pa3 pa4-m pa4-l"><div class="measure-wide-l center f4 lh-copy nested-copy-line-height nested-links mid-gray"><p>Below you will find pages that utilize the taxonomy term “鸟哥”</p></div></article><div class="mw8 center"><section class="flex-ns flex-wrap justify-around mt5"><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2012-09-19-useful-vim-1/ class="link black dim">易忘vim命令1</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">%: **[括号匹配]**可以让光标从它当前所在的括号跳转到与它相匹配的括号上去 n+空格键 ： 那个n表示【数字】，例如20。按下数字后在按空格键盘，光标会向有一栋这一行的n个字符。例如20+空格 则光标会向后面移动20个字符距离。
+0：移动到这一行的最前面字符处
+$：移动到这一行的最后面字符处
+H：光标移动到这个屏幕最上方那一行的第一个字符
+M：光标移动到这个屏幕的中央那一行的第一个字符
+L：光标移动到这个屏幕的最下方那一行的第一个字符__
+G：移动到这个文档的最后一行。
+n+回车键 ：n为数字。光标向下移动n行(常用)
+？word：向光标之上寻找一个字符串名称为word的字符串。
+：n1,n2s/word1/word2/g：n1与n2为数字。在第n1与n2行之间寻找word1这个字符串，并将该字符串取代为word2！举例来说，在100到200行之间搜索vbird并取代为VBIRD则：[:100,200s/vbrid/VBIRD/g]
+1,$s/word1/word2/g：从第一行到最后一行寻找word1字符串，并替换
+1,$s/word1/word2/gc :需要确认的替换。
+删除、复制与黏贴 nx：n为数字，连续向后删除n个字符。举例来说，我要连续删除10个字符【10x】。
+ndd：n为数字。删除光标所在的向下n列，例如20dd则是删除20列。
+d1G：删除光标所在到第一行的所有数据。
+dG：删除光标所在到最后一行的数据 d$：删除游标所在处，到该行的最后一个字符
+d0：删除游标所在处到行首的字符
+nyy，y1G，yG，y0，y$参考上文。
+p,P：p为将已复制的数据在光标下一行贴上，P则为贴在游标上一行！
+J：将光标所在列与下一列的数据结合成同一列。
+**c：重复删除多个数据，例如向下删除10行【10cj】**
+u：重复前一个动作。（常用）
+Ctrl+r：重做上一个动作。（常用）
+.：重复前一个动作，如果你想要重复删除，重复贴上等等动作。</div></div></div></div><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2012-09-19-useful-vim-2/ class="link black dim">易忘vim命令2</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">ZZ：这是大写的Z，若档案没有改动，则不储存离开，若档案已经被更动过，则存储后离开！
+：w [filename] 将编辑的数据储存成另一个档案
+：r [filename] 在编辑数据中，读入另一个档案的数据。
+：n1，n2 w [filename] 将n1到n2的内容储存成filename这个档案
+：!command 暂时离开vi到指令模式下执行command的显示结果！例如[:!ls /home]即可在vi当中查看/home底下以ls输出的档案信息。
+##区块选择## v：字符选择，会将光标经过的地方反白选择！
+V：行选择，会将光标经过的行反白选择！
+Ctrl+v：区块选择，可用长方形的方式选择资料
+y： 将反白的地方复制起来
+d： 将反白的地方删除掉
+##多档案编辑##
+：n 编辑下一个档案
+：N 编辑上一个档案
+：files 列出目前这个vim开启的所有档案
+##多窗口功能##
+：sp /etc/hosts 在分割窗口中打开新文件
+ctrl+w+↑/j及ctrl+w+↓/j 在窗口之间移动：按键的按法是：先按下ctrl不放，再按下w后放开所有的按键，然后在按下j或向下箭头，则光标可移动到下方的窗口。
+ctrl+w+q：关闭下方的窗口
+##vim环境设定与记录：~/.vimrc,~/viminfo##
+：set hlsearch ：set nohlseach 设置搜索反白 ：set autoindent ：set noautoindent 是否自动缩排 ：set backup 是否自动储存备份档 ：set all 显示目前所有环境参数设定值。</div></div></div></div></section></div></main><footer class="bg-black bottom-0 w-100 pa3" role=contentinfo><div class="flex justify-between"><a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href=https://petrie.github.io/>&copy; My New Hugo Site 2022</a><div><div class=ananke-socials></div></div></div></footer></body></html>

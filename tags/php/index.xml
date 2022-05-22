@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>php on My New Hugo Site</title><link>https://petrie.github.io/tags/php/</link><description>Recent content in php on My New Hugo Site</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 12 Apr 2018 18:22:53 +0000</lastBuildDate><atom:link href="https://petrie.github.io/tags/php/index.xml" rel="self" type="application/rss+xml"/><item><title>PHP内存管理ZMM（五）－大内存区large_free_bucket的存入</title><link>https://petrie.github.io/posts/2018-04-12-php-zend-memory-manager4-large-free-bucket/</link><pubDate>Thu, 12 Apr 2018 18:22:53 +0000</pubDate><guid>https://petrie.github.io/posts/2018-04-12-php-zend-memory-manager4-large-free-bucket/</guid><description>&lt;p>之前的章节中介绍过large_free_bucket的存入条件。这一篇将介绍large_free_bucket的主要结构包括其中的链表结构和树结构和存入取出流程。本章讲通过图示大内存区域内存分部情况。&lt;/p>
+&lt;h3 id="什么时候会向large_free_bucket存入内存块">什么时候会向large_free_bucket存入内存块&lt;/h3>
+&lt;p>这里在复习下存入large_free_bucket流程。在调用emalloc申请能存，且在当前heap中没有找到合适内存块，emalloc函数会调用malloc向内核申请内存。向内核申请每次只能申请 heap-&amp;gt;block_size倍数大小内存。所以内核申请到的 heap-&amp;gt;block_size倍数 大小的内存并不会全部返回到emalloc调用者，而是有剩余。&lt;/p>
+&lt;p>举个例子，假设heap-&amp;gt;block_size=256k，如果emalloc调用者申请大小为250k时，emalloc内部会向内核申请256k大小的内存。所以会有6k的内存剩余，这6k的内存将会存入到&lt;strong>大内存区large_free_bucket&lt;/strong>。&lt;/p>
+&lt;p>另外一个例子，假设heap-&amp;gt;block_size=256k，如果emalloc调用者申请大小为260k（大于256k）时，emalloc会申请256*2=512k大小的内存，此时会有512k－260k＝252k的内存剩余。此时剩下的252k内存会存入到&lt;strong>剩余内存区rest_bucket&lt;/strong>。&lt;/p>
+&lt;h3 id="手动构建large_free_bucket结构">手动构建large_free_bucket结构&lt;/h3>
+&lt;h4 id="large_free_bucket结构举例">large_free_bucket结构举例&lt;/h4>
+&lt;p>现在假设有以下内存块在large_free_bucket，分别为：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">大小&lt;/span> &lt;span style="color:#960050;background-color:#1e0010">二进制&lt;/span> alloc_size
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">600&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0010&lt;/span> &lt;span style="color:#ae81ff">0101&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">600&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261496&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">704&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0010&lt;/span> &lt;span style="color:#ae81ff">1100&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">704&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261392&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">800&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0011&lt;/span> &lt;span style="color:#ae81ff">0010&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">800&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261296&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">904&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0011&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">904&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261192&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0011&lt;/span> &lt;span style="color:#ae81ff">1110&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">1000&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261096&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">600&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0010&lt;/span> &lt;span style="color:#ae81ff">0101&lt;/span> &lt;span style="color:#ae81ff">1000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">600&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261496&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">704&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">0010&lt;/span> &lt;span style="color:#ae81ff">1100&lt;/span> &lt;span style="color:#ae81ff">0000&lt;/span> &lt;span style="color:#ae81ff">262144&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">48&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#ae81ff">704&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">261392&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>上面第一列中是准备存入heap中的内存大小，第二列为其二进制。第三列为_zend_mm_alloc_int传入的内存大小。&lt;/p></description></item><item><title>PHP内存管理ZMM（四）－GDB调试php源码并手动调用ZMM相关函数</title><link>https://petrie.github.io/posts/2018-04-11-php-zend-gdb-call/</link><pubDate>Wed, 11 Apr 2018 18:22:53 +0000</pubDate><guid>https://petrie.github.io/posts/2018-04-11-php-zend-gdb-call/</guid><description>&lt;p>本章讲介绍gdb调试php，并手动调用ZMM中申请内存和查找大内存块的函数&lt;/p>
+&lt;ul>
+&lt;li>_zend_mm_alloc_int&lt;/li>
+&lt;li>zend_mm_search_large_block&lt;/li>
+&lt;/ul>
+&lt;h4 id="为什么要手动调用函数">为什么要手动调用函数&lt;/h4>
+&lt;p>在阅读PHP ZMM源码的时候，有许多复杂的逻辑仅仅通过阅读源码很难理解，比如大内存large_free_buckets结构的构造。同构手动调用函数，可以方便的执行要申请的内存大小，从而测试构造large_free_buckets结构&lt;/p>
+&lt;h4 id="编译安装php">编译安装PHP&lt;/h4>
+&lt;p>从github上下载php源码&lt;/p>
+&lt;p>编译到目录:~/php5.6-disabledebug，注意不要开启debug选项&lt;/p>
+&lt;h4 id="gdb调试php">GDB调试PHP&lt;/h4></description></item><item><title>PHP内存管理ZMM（三）－内存分配函数emalloc</title><link>https://petrie.github.io/posts/2018-04-09-php-zend-memory-manager-2/</link><pubDate>Wed, 11 Apr 2018 10:22:53 +0000</pubDate><guid>https://petrie.github.io/posts/2018-04-09-php-zend-memory-manager-2/</guid><description>&lt;h4 id="主流程">主流程&lt;/h4>
+&lt;p>emalloc是ZMM中heap层实现的函数，其内部调用_zend_mm_alloc_int函数。在_zend_mm_alloc_int中会依次在heap层的缓存区、小内存区、大内存区、剩余内存区寻找合适的内存。如果在这四个区域中都为查找到合适的内存，则调用malloc向内核申请，在向内核申请内存时，申请的大小必须是segment_size(256k)的整数倍，最小为256k。以下用流程图展示&lt;/p></description></item><item><title>PHP内存管理ZMM（二）－常见宏的值</title><link>https://petrie.github.io/posts/2018-04-09-normal-zend-macro-value/</link><pubDate>Mon, 09 Apr 2018 14:22:25 +0000</pubDate><guid>https://petrie.github.io/posts/2018-04-09-normal-zend-macro-value/</guid><description>&lt;h4 id="相关宏的定义">相关宏的定义&lt;/h4>
+&lt;p>64位系统非debug模式编译后的&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_ALIGNMENT 8
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_ALIGNMENT_LOG2 3
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_MIN_SIZE ((ZEND_MM_ALIGNED_MIN_HEADER_SIZE&amp;gt;(ZEND_MM_ALIGNED_HEADER_SIZE+END_MAGIC_SIZE))?(ZEND_MM_ALIGNED_MIN_HEADER_SIZE-(ZEND_MM_ALIGNED_HEADER_SIZE+END_MAGIC_SIZE)):0)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_MAX_SMALL_SIZE ((ZEND_MM_NUM_BUCKETS&amp;lt;&amp;lt;ZEND_MM_ALIGNMENT_LOG2)+ZEND_MM_ALIGNED_MIN_HEADER_SIZE)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_ALIGNED_HEADER_SIZE ZEND_MM_ALIGNED_SIZE(sizeof(zend_mm_block))
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_ALIGNED_FREE_HEADER_SIZE ZEND_MM_ALIGNED_SIZE(sizeof(zend_mm_small_free_block))
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_MIN_ALLOC_BLOCK_SIZE ZEND_MM_ALIGNED_SIZE(ZEND_MM_ALIGNED_HEADER_SIZE + END_MAGIC_SIZE)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_ALIGNED_MIN_HEADER_SIZE (ZEND_MM_MIN_ALLOC_BLOCK_SIZE&amp;gt;ZEND_MM_ALIGNED_FREE_HEADER_SIZE?ZEND_MM_MIN_ALLOC_BLOCK_SIZE:ZEND_MM_ALIGNED_FREE_HEADER_SIZE)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_ALIGNED_SEGMENT_SIZE ZEND_MM_ALIGNED_SIZE(sizeof(zend_mm_segment))
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_TRUE_SIZE(size) ((size&amp;lt;ZEND_MM_MIN_SIZE)?(ZEND_MM_ALIGNED_MIN_HEADER_SIZE):(ZEND_MM_ALIGNED_SIZE(size+ZEND_MM_ALIGNED_HEADER_SIZE+END_MAGIC_SIZE)))
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_SMALL_SIZE(true_size) (true_size &amp;lt; ZEND_MM_MAX_SMALL_SIZE)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#define ZEND_MM_BUCKET_INDEX(true_size) ((true_size&amp;gt;&amp;gt;ZEND_MM_ALIGNMENT_LOG2)-(ZEND_MM_ALIGNED_MIN_HEADER_SIZE&amp;gt;&amp;gt;ZEND_MM_ALIGNMENT_LOG2))
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>下面依次解释各个宏的含义和作用&lt;/p>
+&lt;ul>
+&lt;li>ZEND_MM_ALIGNMENT&lt;/li>
+&lt;/ul>
+&lt;p>内存对齐的时候用到，值为8，无特别的逻辑含义&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>ZEND_MM_ALIGNMENT_LOG2&lt;/p>
+&lt;p>辅助内存对齐的时候用到，值为3，无特别的逻辑含义&lt;/p>
+&lt;/li>
+&lt;/ul></description></item><item><title>PHP内存管理ZMM(一)－基本概念、数据结构和相关初始化函数</title><link>https://petrie.github.io/posts/2018-04-08-php-zend-memory-manager/</link><pubDate>Sun, 08 Apr 2018 06:06:12 +0000</pubDate><guid>https://petrie.github.io/posts/2018-04-08-php-zend-memory-manager/</guid><description>&lt;h4 id="基本概念">基本概念&lt;/h4>
+&lt;p>&lt;img src="http://flykobe.com/wp-content/uploads/2015/03/php-zend-memory-manager.jpg" alt="ZZM架构图">&lt;/p>
+&lt;p>如上图所示，中间部分的zend memory manage由接口层、heap层、存储层(storage)组成。内存管理的主要逻辑在heap层中，后续主要讲解相关的数据结构和函数流程。&lt;/p>
+&lt;h4 id="基本数据结构">基本数据结构&lt;/h4>
+&lt;p>基于PHP-5.6&lt;/p>
+&lt;h5 id="zend_mm_block_info">zend_mm_block_info&lt;/h5>
+&lt;p>_zend_mm_block_info是ZMM内存管理中最小的数据单元。各字段含义见代码注释&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-c" data-lang="c">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">typedef&lt;/span> &lt;span style="color:#66d9ef">struct&lt;/span> _zend_mm_block_info {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#if ZEND_MM_COOKIES
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> size_t _cookie;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#endif
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> size_t _size;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> size_t _prev;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>} zend_mm_block_info;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>PHP扩展开发－自动生成扩展骨架</title><link>https://petrie.github.io/posts/2018-03-29-first-php-extension/</link><pubDate>Thu, 29 Mar 2018 03:55:12 +0000</pubDate><guid>https://petrie.github.io/posts/2018-03-29-first-php-extension/</guid><description>&lt;p>PHP扩展编译有两种方式&lt;/p>
+&lt;ul>
+&lt;li>作为一个可装载模块或者DSO（动态共享对象）&lt;/li>
+&lt;li>静态编译到PHP&lt;/li>
+&lt;/ul>
+&lt;p>静态编译的方式直接和PHP编译到一起，步骤比较简单，但每次变更代码都要编译这个PHP代码，非常耗时，所以这里采用第二种方式&lt;/p>
+&lt;h4 id="开发环境">开发环境&lt;/h4>
+&lt;p>本文脚本命令仅在以下环境测试成功&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>操作系统：CentOS 6.9
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>PHP版本：PHP-7.1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="安装开发工具包">安装开发工具包&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>yum groupinstall -y &lt;span style="color:#e6db74">&amp;#39;Development Tools&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></description></item><item><title>如何独立的使用Laravel的IOC功能</title><link>https://petrie.github.io/posts/2018-03-21-laravel-ioc/</link><pubDate>Wed, 21 Mar 2018 05:55:12 +0000</pubDate><guid>https://petrie.github.io/posts/2018-03-21-laravel-ioc/</guid><description>&lt;p>Laravel拥有一个强大的IOC/DI容器。且可以独立于Laravel使用。本文介绍如何单独使用Laravel的container组件&lt;/p></description></item><item><title>PHP设置连接mysql超时时间</title><link>https://petrie.github.io/posts/2017-06-04-php-mysql-timeout/</link><pubDate>Sun, 04 Jun 2017 20:55:12 +0000</pubDate><guid>https://petrie.github.io/posts/2017-06-04-php-mysql-timeout/</guid><description>&lt;p>本文将分别介绍PHP的mysql扩展, mysqli扩展, mysql_pdo扩展,mysqlnd扩展和libmysql 这些名词的含义。以及他们之间的关系。最后再介绍如何配置mysql的超时时间。&lt;/p>
+&lt;h1 id="一mysqlmysqlimysql_pdomysqlnd扩展">一、mysql,mysqli,mysql_pdo,mysqlnd扩展&lt;/h1>
+&lt;p>当考虑连接到MySQL数据库服务器的时候，有三种主要的API可供选择：&lt;/p>
+&lt;ul>
+&lt;li>PHP的MySQL扩展&lt;/li>
+&lt;li>PHP的mysqli扩展&lt;/li>
+&lt;li>PHP数据对象(PDO)&lt;/li>
+&lt;/ul>
+&lt;p>三者都有各自的优缺点。下面的讨论就是为了对每种API的关键方面给出一个简短的介绍。&lt;/p></description></item><item><title>更新Mac的PHP默认版本</title><link>https://petrie.github.io/posts/2017-04-10-mac-php-version/</link><pubDate>Mon, 10 Apr 2017 01:07:38 +0000</pubDate><guid>https://petrie.github.io/posts/2017-04-10-mac-php-version/</guid><description>知识点 类*nx系统，系统默认软件的安装位置
+/usr/bin 非系统默认，brew安装的软件安装位置
+/usr/local/bin brew安装指定版本php后，执行一下命令，设置新版本为默认php版本 export PATH=&amp;#34;$(brew --prefix php56)/bin:$PATH&amp;#34; export PATH=&amp;#34;$(brew --prefix php56)/sbin:$PATH&amp;#34; export PATH=&amp;#34;/usr/local/bin:/usr/local/sbin:$PATH&amp;#34;</description></item><item><title>PHP 枚举类型</title><link>https://petrie.github.io/posts/2016-08-25-php-%E6%9E%9A%E4%B8%BE%E7%B1%BB%E5%9E%8B/</link><pubDate>Thu, 25 Aug 2016 18:00:54 +0000</pubDate><guid>https://petrie.github.io/posts/2016-08-25-php-%E6%9E%9A%E4%B8%BE%E7%B1%BB%E5%9E%8B/</guid><description>问题 PHP没有原声的枚举，从Java转过来的就懵逼了。那么怎么才能在PHP中使用枚举，而且又能被IDE识别呢。Constants（define）是一种办法，但是他是全局的，有命名空间冲突的问题。虽然数组没有命名空间问题，但是数组定义常量太模糊，而且运行时是可以被覆盖的，而且很少有IDE可以自动补全。
+解决方案一 1.简单的用法 abstract class DaysOfWeek { const Sunday = 0; const Monday = 1; // etc. } $today = DaysOfWeek::Sunday; 以上的方式很多情况下需要验证常量的值，以下的方法可以应用大部分场景
+2.完善的用法 abstract class BasicEnum { private static $constCacheArray = NULL; private static function getConstants() { if (self::$constCacheArray == NULL) { self::$constCacheArray = []; } $calledClass = get_called_class(); if (!array_key_exists($calledClass, self::$constCacheArray)) { $reflect = new ReflectionClass($calledClass); self::$constCacheArray[$calledClass] = $reflect-&amp;gt;getConstants(); } return self::$constCacheArray[$calledClass]; } public static function isValidName($name, $strict = false) { $constants = self::getConstants(); if ($strict) { return array_key_exists($name, $constants); } $keys = array_map(&amp;#39;strtolower&amp;#39;, array_keys($constants)); return in_array(strtolower($name), $keys); } public static function isValidValue($value, $strict = true) { $values = array_values(self::getConstants()); return in_array($value, $values, $strict); } } //应用场景 abstract class DaysOfWeek extends BasicEnum { const Sunday = 0; const Monday = 1; const Tuesday = 2; const Wednesday = 3; const Thursday = 4; const Friday = 5; const Saturday = 6; } DaysOfWeek::isValidName(&amp;#39;Humpday&amp;#39;); // false DaysOfWeek::isValidName(&amp;#39;Monday&amp;#39;); // true DaysOfWeek::isValidName(&amp;#39;monday&amp;#39;); // true DaysOfWeek::isValidName(&amp;#39;monday&amp;#39;, $strict = true); // false DaysOfWeek::isValidName(0); // false DaysOfWeek::isValidValue(0); // true DaysOfWeek::isValidValue(5); // true DaysOfWeek::isValidValue(7); // false DaysOfWeek::isValidValue(&amp;#39;Friday&amp;#39;); // false 解决方案二 使用PHP Perl扩展中的SplEnum 示例</description></item><item><title>PHP面试知识点</title><link>https://petrie.github.io/posts/2016-07-24-php%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9/</link><pubDate>Sun, 24 Jul 2016 14:25:20 +0000</pubDate><guid>https://petrie.github.io/posts/2016-07-24-php%E9%9D%A2%E8%AF%95%E7%9F%A5%E8%AF%86%E7%82%B9/</guid><description> 伯乐在线面试题
+cnblogs面试题
+​</description></item><item><title>Nignx+PHP中HTTP请求返回502</title><link>https://petrie.github.io/posts/2016-06-28-nignx-php%E4%B8%ADhttp%E8%AF%B7%E6%B1%82%E8%BF%94%E5%9B%9E502/</link><pubDate>Tue, 28 Jun 2016 19:38:18 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-28-nignx-php%E4%B8%ADhttp%E8%AF%B7%E6%B1%82%E8%BF%94%E5%9B%9E502/</guid><description>Nginx + PHP-FPM 报 502 错误，我想大部分 RD 都遇到过吧。根据报错的频率，可以分为两种情况，间歇性的502和连续性的502。间歇性502，是后端 PHP-FPM 不可用造成的，间歇性的502一般认为是由于 PHP-FPM 进程重启造成的。连续性502很可能是由于cgi处理时间过长导致超时所致。下面讨论超时相关的参数：
+nginx 相关配置:nginx.conf
+fastcgi_connect_timeout 300; fastcgi_send_timeout 300; fastcgi_read_timeout 300; php-fpm相关配置:php-fpm.conf
+request_terminate_timeout = 10s php 相关配置:php.ini
+max_execution_time</description></item><item><title>CI 环境配置</title><link>https://petrie.github.io/posts/2015-03-05-ci-config/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2015-03-05-ci-config/</guid><description>502 bad getway
+原因：php-cgi 没启动
+Your system folder path does not appear to be set correctly. Please open the following file and correct this: index.php
+原因：CI框架 system,application 路径配置错误</description></item></channel></rss>

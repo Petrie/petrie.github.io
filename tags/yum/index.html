@@ -1,0 +1,31 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>yum | My New Hugo Site</title><meta name=viewport content="width=device-width,minimum-scale=1"><meta name=description content><meta name=generator content="Hugo 0.99.1"><meta name=robots content="noindex, nofollow"><link rel=stylesheet href=/ananke/css/main.min.css><link href=/tags/yum/index.xml rel=alternate type=application/rss+xml title="My New Hugo Site"><link href=/tags/yum/index.xml rel=feed type=application/rss+xml title="My New Hugo Site"><meta property="og:title" content="yum"><meta property="og:description" content><meta property="og:type" content="website"><meta property="og:url" content="https://petrie.github.io/tags/yum/"><meta itemprop=name content="yum"><meta itemprop=description content><meta name=twitter:card content="summary"><meta name=twitter:title content="yum"><meta name=twitter:description content></head><body class="ma0 avenir bg-near-white"><header><div class="pb3-m pb6-l bg-black"><nav class="pv3 ph3 ph4-ns" role=navigation><div class="flex-l justify-between items-center center"><a href=/ class="f3 fw2 hover-white no-underline white-90 dib">My New Hugo Site</a><div class="flex-l items-center"><div class=ananke-socials></div></div></div></nav><div class="tc-l pv3 ph3 ph4-ns"><h1 class="f2 f-subheadline-l fw2 light-silver mb0 lh-title">yum</h1></div></div></header><main class=pb7 role=main><article class="cf pa3 pa4-m pa4-l"><div class="measure-wide-l center f4 lh-copy nested-copy-line-height nested-links mid-gray"><p>Below you will find pages that utilize the taxonomy term “yum”</p></div></article><div class="mw8 center"><section class="flex-ns flex-wrap justify-around mt5"><div class="relative w-100 mb4 bg-white"><div class="relative w-100 mb4 bg-white nested-copy-line-height"><div class="bg-white mb3 pa4 gray overflow-hidden"><span class="f6 db">Posts</span><h1 class="f3 near-black"><a href=/posts/2012-09-18-linux-yum-iso/ class="link black dim">利用CentOS.ISO配置本地yum源</a></h1><div class="nested-links f5 lh-copy nested-copy-line-height">#扯淡# 公司的网络要用代理，许多非常cool的东西都玩不了，真垃圾。
+组长让搞一个LNMP的教程。
+上次在开发机上乱搞，把LNMP搞乱了，程序不能运行，调了好久，最后只好请来别的组的一位大神才解决。谁让自己是LNMP菜鸟呢!组里也都是做.Net的
+从此我就不敢再在开发机上乱弄了。 （这事才几天，缓缓再说）。
+开发联网上网不用通过代理，用起来爽啊，装点啥直接yum。
+这几天还得把LNMP教程弄出来。
+用不了开发机，只能在本机折腾了，先装Mysql，源码安装要用到cmake，不能用yum（不能上网），自己找依赖吧。
+本想依赖最多有1，2层吧，可是事实不是这样，各种深度，各种广度啊。果断改变策略。想起以前在uplooking学Linux的时候老师曾教过本地yum配置。所幸试一试。
+废话了这么多终于要进入正题了&mldr;
+#正题# 1.将下好的dvdiso复制到虚拟机的 /home/petrie/ 下并重命名为centos.iso。此时iso的目录为/home/petrie/centos.iso
+2.将dvdiso文件绑定到目录/mnt/centos_iso
+mkdir /mnt/centos_iso
+mount -o loop /home/petrie/centos.iso /mnt/centos_iso
+好了，现在光盘中的rpm都可以用来安装了，但是这能安装那些没有依赖的，有依赖的要自行处理，接下来要安装的东西后面会用到，十分幸运，她没有依赖
+3.安装配置软件
+cd /mnt/centos_iso/CentOS
+rpm -ivh createrepo-0.4.11-3.el5.noarch.rpm
+4.运行createrepo
+cd /mnt
+createrepo ./ 这个过程挺长的2，3分钟吧
+5.修改配置
+cd /etc/yum.repos.d/
+vim dvdiso.repo
+在dvdiso.repo中写入以下内容：
+[DVDISO]
+name=DVD ISO
+baseurl=file:///mnt/
+enabled=1
+gpgcheck=0
+注意：步骤5 需要将/etc/yum.repos.d/下的文件清空，也就是说/etc/yum.repos.d/下只能有dvdiso.repo文件
+这就好了，执行 yum clean all;yum list,执行成功则说明配置成功了。 赶紧装个软件试试吧~ pretty cool！ huh~</div></div></div></div></section></div></main><footer class="bg-black bottom-0 w-100 pa3" role=contentinfo><div class="flex justify-between"><a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href=https://petrie.github.io/>&copy; My New Hugo Site 2022</a><div><div class=ananke-socials></div></div></div></footer></body></html>

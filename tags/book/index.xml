@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>book on My New Hugo Site</title><link>https://petrie.github.io/tags/book/</link><description>Recent content in book on My New Hugo Site</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><atom:link href="https://petrie.github.io/tags/book/index.xml" rel="self" type="application/rss+xml"/><item><title>Vim 进阶1</title><link>https://petrie.github.io/posts/2013-08-29-vim-advanced-1/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2013-08-29-vim-advanced-1/</guid><description>##Vim 进阶[1]##
+:g/pattern 寻找（移动）文件中最后一次出现pattern的地方。
+:g/pattern/p 寻找并显示文件中所有包含pattern的行
+:x 写入文件同时离开编辑器。只有文件被修改过时才会写入。
+:g/pattern/s/old/new/g这种语法让你搜索一个模式，在找到包含模式的某一行时，对另外一个字符做替换。
+vaw 选中当前单词
+vawp 选中当前单词并用寄存器中的覆盖</description></item></channel></rss>

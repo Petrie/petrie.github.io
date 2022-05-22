@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>for on My New Hugo Site</title><link>https://petrie.github.io/tags/for/</link><description>Recent content in for on My New Hugo Site</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Thu, 23 Jun 2016 15:14:34 +0000</lastBuildDate><atom:link href="https://petrie.github.io/tags/for/index.xml" rel="self" type="application/rss+xml"/><item><title>shell命令行for语句</title><link>https://petrie.github.io/posts/2016-06-23-shell-for/</link><pubDate>Thu, 23 Jun 2016 15:14:34 +0000</pubDate><guid>https://petrie.github.io/posts/2016-06-23-shell-for/</guid><description>很久就想写一篇关于shell的for语法的博客了。预谋了很久，今天终于提笔 核心语法
+for i in `ls`;do echo $i;done; 常见场景：
+查询一组host对应的IP
+for计数和shell的四则运算
+for((i=1;i&amp;lt;=10;i++));do echo $(expr $i \* 4);done for计数2
+for i in $(seq 10) for循环命令执行结果
+for i in `ls` 或者
+for i in $(ls) for循环数组变量
+arr=(1 2 3 4);for i in ${arr[@]};do echo $i;done;</description></item></channel></rss>
