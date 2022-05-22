@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>cache consistency on Petrie's Site</title><link>https://petrie.github.io/tags/cache-consistency/</link><description>Recent content in cache consistency on Petrie's Site</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sun, 22 May 2022 20:33:26 +0800</lastBuildDate><atom:link href="https://petrie.github.io/tags/cache-consistency/index.xml" rel="self" type="application/rss+xml"/><item><title>缓存和数据库一致性探讨，理解CAP理论</title><link>https://petrie.github.io/posts/cache-consistency-to-cap/</link><pubDate>Sun, 22 May 2022 20:33:26 +0800</pubDate><guid>https://petrie.github.io/posts/cache-consistency-to-cap/</guid><description>&lt;h2 id="从用户信息查询开始">从用户信息查询开始&lt;/h2>
+&lt;p>用户信息的存储是大家较为熟悉的场景，为了实现用户信息存储的基本功能。 我们需要将数据存入数据库。&lt;/p>
+&lt;p>&lt;code> 查询的时候select。更新的时候update。&lt;/code>&lt;/p>
+&lt;h2 id="什么时候查询缓存什么时候更新缓存-">什么时候查询缓存？什么时候更新缓存 ？&lt;/h2>
+&lt;p>当并发起来后，数据库的并发性能有限。这个时候就需要引入缓存慢，在查询时优先查缓存，以缓解数据库压力。 引入缓存，需要考虑一下两个问题：&lt;/p>
+&lt;ul>
+&lt;li>1、什么时候查询缓存&lt;/li>
+&lt;li>2、什么时候更新缓存&lt;/li>
+&lt;/ul></description></item></channel></rss>
