@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>鸟哥 on Petrie's Site</title><link>https://petrie.github.io/tags/%E9%B8%9F%E5%93%A5/</link><description>Recent content in 鸟哥 on Petrie's Site</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><atom:link href="https://petrie.github.io/tags/%E9%B8%9F%E5%93%A5/index.xml" rel="self" type="application/rss+xml"/><item><title>易忘vim命令1</title><link>https://petrie.github.io/posts/2012-09-19-useful-vim-1/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-09-19-useful-vim-1/</guid><description>%: **[括号匹配]**可以让光标从它当前所在的括号跳转到与它相匹配的括号上去 n+空格键 ： 那个n表示【数字】，例如20。按下数字后在按空格键盘，光标会向有一栋这一行的n个字符。例如20+空格 则光标会向后面移动20个字符距离。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>鸟哥 on Petrie's Site</title><link>https://petrie.github.io/tags/%E9%B8%9F%E5%93%A5/</link><description>Recent content in 鸟哥 on Petrie's Site</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><atom:link href="https://petrie.github.io/tags/%E9%B8%9F%E5%93%A5/index.xml" rel="self" type="application/rss+xml"/><item><title>易忘vim命令1</title><link>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</guid><description>%: **[括号匹配]**可以让光标从它当前所在的括号跳转到与它相匹配的括号上去 n+空格键 ： 那个n表示【数字】，例如20。按下数字后在按空格键盘，光标会向有一栋这一行的n个字符。例如20+空格 则光标会向后面移动20个字符距离。
 0：移动到这一行的最前面字符处
 $：移动到这一行的最后面字符处
 H：光标移动到这个屏幕最上方那一行的第一个字符
@@ -21,7 +21,7 @@ J：将光标所在列与下一列的数据结合成同一列。
 **c：重复删除多个数据，例如向下删除10行【10cj】**
 u：重复前一个动作。（常用）
 Ctrl+r：重做上一个动作。（常用）
-.：重复前一个动作，如果你想要重复删除，重复贴上等等动作。</description></item><item><title>易忘vim命令2</title><link>https://petrie.github.io/posts/2012-09-19-useful-vim-2/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/posts/2012-09-19-useful-vim-2/</guid><description>ZZ：这是大写的Z，若档案没有改动，则不储存离开，若档案已经被更动过，则存储后离开！
+.：重复前一个动作，如果你想要重复删除，重复贴上等等动作。</description></item><item><title>易忘vim命令2</title><link>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A42/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A42/</guid><description>ZZ：这是大写的Z，若档案没有改动，则不储存离开，若档案已经被更动过，则存储后离开！
 ：w [filename] 将编辑的数据储存成另一个档案
 ：r [filename] 在编辑数据中，读入另一个档案的数据。
 ：n1，n2 w [filename] 将n1到n2的内容储存成filename这个档案
