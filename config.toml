@@ -12,13 +12,15 @@ Paginate = 9
     tag = "tags"
     category = "categories"
 
-
 [params]
     date_format = "2006 January 2日"
     body_classes = "baskerville bg-washed-yellow"
-
+    recent_posts_number = 6
+    cover_dimming_class = ""
 
 [[params.ananke_socials]]
     name = "github"
     url = "https://github.com/petrie"
 
+[permalinks]
+    posts = '/:year/:month/:title/'
