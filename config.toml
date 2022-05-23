@@ -5,7 +5,6 @@ theme = "ananke"
 disqusShortname = "petrie"
 googleAnalytics = "G-T6WSQ8M692"
 DefaultContentLanguage = "zh"
-SectionPagesMenu = "main"
 Paginate = 9
 
 [taxonomies]

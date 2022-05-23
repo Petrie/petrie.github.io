@@ -1,4 +1,4 @@
 ---
-title: "Petrie's Site"
+title: ""
 description: "Go&PHP Programmer"
 ---
