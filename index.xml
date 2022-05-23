@@ -354,7 +354,7 @@ hi，我是民大计算机08的刘朋飞。民大北京校友会的志愿者~ �
 以下3个QQ群：
 大连民大在北京 90617726 民大内推 ② 252929118 民大内推 ① 177920791
 分工：
-王妍 QQ号1，2，,3打头的 杨静莲 QQ号4，5，6打头的 刘梦园 QQ号7，8，9大头的</description></item><item><title>我</title><link>https://petrie.github.io/about/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/about/</guid><description/></item><item><title>易忘vim命令1</title><link>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</guid><description>%: **[括号匹配]**可以让光标从它当前所在的括号跳转到与它相匹配的括号上去 n+空格键 ： 那个n表示【数字】，例如20。按下数字后在按空格键盘，光标会向有一栋这一行的n个字符。例如20+空格 则光标会向后面移动20个字符距离。
+王妍 QQ号1，2，,3打头的 杨静莲 QQ号4，5，6打头的 刘梦园 QQ号7，8，9大头的</description></item><item><title>易忘vim命令1</title><link>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</guid><description>%: **[括号匹配]**可以让光标从它当前所在的括号跳转到与它相匹配的括号上去 n+空格键 ： 那个n表示【数字】，例如20。按下数字后在按空格键盘，光标会向有一栋这一行的n个字符。例如20+空格 则光标会向后面移动20个字符距离。
 0：移动到这一行的最前面字符处
 $：移动到这一行的最后面字符处
 H：光标移动到这个屏幕最上方那一行的第一个字符
