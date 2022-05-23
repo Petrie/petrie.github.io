@@ -7,7 +7,7 @@
 &lt;li>1、什么时候查询缓存&lt;/li>
 &lt;li>2、什么时候更新缓存&lt;/li>
 &lt;/ul></description></item><item><title>PHP内存管理ZMM（五）－大内存区large_free_bucket的存入</title><link>https://petrie.github.io/2018/04/php%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86zmm%E4%BA%94%E5%A4%A7%E5%86%85%E5%AD%98%E5%8C%BAlarge_free_bucket%E7%9A%84%E5%AD%98%E5%85%A5/</link><pubDate>Thu, 12 Apr 2018 18:22:53 +0000</pubDate><guid>https://petrie.github.io/2018/04/php%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86zmm%E4%BA%94%E5%A4%A7%E5%86%85%E5%AD%98%E5%8C%BAlarge_free_bucket%E7%9A%84%E5%AD%98%E5%85%A5/</guid><description>&lt;p>之前的章节中介绍过large_free_bucket的存入条件。这一篇将介绍large_free_bucket的主要结构包括其中的链表结构和树结构和存入取出流程。本章讲通过图示大内存区域内存分部情况。&lt;/p>
-&lt;h3 id="什么时候会向large_free_bucket存入内存块">什么时候会向large_free_bucket存入内存块&lt;/h3>
+&lt;h2 id="什么时候会向large_free_bucket存入内存块">什么时候会向large_free_bucket存入内存块&lt;/h2>
 &lt;p>这里在复习下存入large_free_bucket流程。在调用emalloc申请能存，且在当前heap中没有找到合适内存块，emalloc函数会调用malloc向内核申请内存。向内核申请每次只能申请 heap-&amp;gt;block_size倍数大小内存。所以内核申请到的 heap-&amp;gt;block_size倍数 大小的内存并不会全部返回到emalloc调用者，而是有剩余。&lt;/p></description></item><item><title>PHP内存管理ZMM（四）－GDB调试php源码并手动调用ZMM相关函数</title><link>https://petrie.github.io/2018/04/php%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86zmm%E5%9B%9Bgdb%E8%B0%83%E8%AF%95php%E6%BA%90%E7%A0%81%E5%B9%B6%E6%89%8B%E5%8A%A8%E8%B0%83%E7%94%A8zmm%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0/</link><pubDate>Wed, 11 Apr 2018 18:22:53 +0000</pubDate><guid>https://petrie.github.io/2018/04/php%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86zmm%E5%9B%9Bgdb%E8%B0%83%E8%AF%95php%E6%BA%90%E7%A0%81%E5%B9%B6%E6%89%8B%E5%8A%A8%E8%B0%83%E7%94%A8zmm%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0/</guid><description>&lt;p>本章讲介绍gdb调试php，并手动调用ZMM中申请内存和查找大内存块的函数&lt;/p>
 &lt;ul>
 &lt;li>_zend_mm_alloc_int&lt;/li>
