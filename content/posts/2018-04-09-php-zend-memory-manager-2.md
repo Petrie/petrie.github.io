@@ -6,6 +6,7 @@ tags:
   - c
 category: php
 featured_image: '/images/php.png'
+isCJKLanguage: true
 ---
 
 

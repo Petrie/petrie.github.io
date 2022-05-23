@@ -6,12 +6,13 @@ tags:
 categories: [php]
 date: 2018-04-12 18:22:53
 featured_image: '/images/php.png'
+isCJKLanguage: true
 ---
 
 
 之前的章节中介绍过large_free_bucket的存入条件。这一篇将介绍large_free_bucket的主要结构包括其中的链表结构和树结构和存入取出流程。本章讲通过图示大内存区域内存分部情况。
 
-### 什么时候会向large_free_bucket存入内存块
+## 什么时候会向large_free_bucket存入内存块
 
 这里在复习下存入large_free_bucket流程。在调用emalloc申请能存，且在当前heap中没有找到合适内存块，emalloc函数会调用malloc向内核申请内存。向内核申请每次只能申请 heap->block_size倍数大小内存。所以内核申请到的  heap->block_size倍数 大小的内存并不会全部返回到emalloc调用者，而是有剩余。
 <!--more-->
@@ -20,15 +21,14 @@ featured_image: '/images/php.png'
 
 另外一个例子，假设heap->block_size=256k，如果emalloc调用者申请大小为260k（大于256k）时，emalloc会申请256*2=512k大小的内存，此时会有512k－260k＝252k的内存剩余。此时剩下的252k内存会存入到**剩余内存区rest_bucket**。
 
-### 手动构建large_free_bucket结构
+## 手动构建large_free_bucket结构
 
-#### large_free_bucket结构举例
+### large_free_bucket结构举例
 
 现在假设有以下内存块在large_free_bucket，分别为：
 
 ```c
 大小			二进制					alloc_size
-	
 600			0000 0010 0101 1000		262144-48-600=261496
 704			0000 0010 1100 0000		262144-48-704=261392
 800			0000 0011 0010 0000		262144-48-800=261296
@@ -43,7 +43,7 @@ featured_image: '/images/php.png'
 
 之前提过用gdb手动调用_zend_mm_alloc_int的方法，详情看一下前面的文章“[PHP内存管理ZMM（四）－GDB调试php源码并手动调用ZMM相关函数](http://petrie.github.io/2018/04/11/php-zend-gdb-call/)”。
 
-#### 存入第一个大小为600b的内存
+### 存入第一个大小为600b的内存
 
 手动调用
 
@@ -85,7 +85,7 @@ $15 = {info = {_size = 600, _prev = 261513}, prev_free_block = 0x7ffff7fabda8, n
 		} else {
 ```
 
-#### 存入大小为600b的内存
+### 存入大小为600b的内存
 
 手动调用
 
@@ -140,7 +140,7 @@ $30 = {info = {_size = 704, _prev = 261409}, prev_free_block = 0x7ffff7f6ad40, n
 
 
 
-#### 存入大小为800b、904b、1000b的内存
+### 存入大小为800b、904b、1000b的内存
 
 依次手动调用
 
@@ -171,7 +171,7 @@ $76 = {info = {_size = 1000, _prev = 261113}, prev_free_block = 0x7ffff7ee8c18, 
 
 ![](http://on-img.com/chart_image/5acf1a4ce4b0f5fa24d00514.png)
 
-#### 存入大小为600b、704b的内存
+### 存入大小为600b、704b的内存
 
 依次手动调用
 
@@ -222,6 +222,6 @@ $102 = {info = {_size = 600, _prev = 261513}, prev_free_block = 0x7ffff7fecda8, 
 
 
 
-### END
+## END
 
 本章内容较多，可能会比较难理解，通过gdb调试有助于更好的理解。另外前几篇关于ZMM的文章也有助于对本章的理解。

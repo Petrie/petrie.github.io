@@ -3,6 +3,7 @@ title: PHP设置连接mysql超时时间
 date: 2017-06-04 20:55:12
 category: php
 tags: [php ,mysql]
+featured_image: '/images/php.png'
 ---
 
 本文将分别介绍PHP的mysql扩展, mysqli扩展, mysql_pdo扩展,mysqlnd扩展和libmysql 这些名词的含义。以及他们之间的关系。最后再介绍如何配置mysql的超时时间。

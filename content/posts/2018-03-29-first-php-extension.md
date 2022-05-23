@@ -5,6 +5,8 @@ tags:
   - php-extension
 category: php
 date: 2018-03-29 03:55:12
+featured_image: '/images/php.png'
+isCJKLanguage: true
 ---
 PHP扩展编译有两种方式
 

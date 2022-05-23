@@ -5,7 +5,8 @@ tags:
   - laravel
   - ioc
 category: laravel
-date: 2018-03-21 05:55:12
+date: 2018-03-21 05:55:12 
+featured_image: '/images/php.png'
 ---
 
 Laravel拥有一个强大的IOC/DI容器。且可以独立于Laravel使用。本文介绍如何单独使用Laravel的container组件

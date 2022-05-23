@@ -4,7 +4,7 @@ title = "Petrie's Site"
 theme = "ananke"
 disqusShortname = "petrie"
 googleAnalytics = "G-T6WSQ8M692"
-DefaultContentLanguage = "zh"
+DefaultContentLanguage = "zh-cn"
 Paginate = 9
 
 [taxonomies]
@@ -12,10 +12,12 @@ Paginate = 9
     category = "categories"
 
 [params]
-    date_format = "2006 January 2日"
+    date_format = "2006年01月2日"
     body_classes = "baskerville bg-washed-yellow"
     recent_posts_number = 6
     cover_dimming_class = ""
+    show_reading_time = true
+
 
 [[params.ananke_socials]]
     name = "github"
