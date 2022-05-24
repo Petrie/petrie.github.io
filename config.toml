@@ -25,16 +25,3 @@ Paginate = 9
 
 [permalinks]
     posts = '/:year/:month/:title/'
-
-[menu]
-    [[menu.main]]
-        identifier = "categories"
-        name = "分类"
-        url = "/categories/"
-        weight = 10
-
-    [[menu.main]]
-        identifier = "tags"
-        name = "标签"
-        url = "/tags/"
-        weight = 20
