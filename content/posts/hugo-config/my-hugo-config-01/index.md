@@ -8,6 +8,7 @@ categories:
     - "hugo"
 isCJKLanguage: true
 hasMermaid: true
+featured_image: "./images/hugo_logo.png"
 ---
 
 ## 一、支持评论
@@ -16,10 +17,9 @@ Disqus 的交互设计太傻X了。
 如何正确获取你需要配置的内容，见下面的导引：  
 [首页](https://disqus.com/)->Get Start -> I want to install Disqus on my site  -> Website Name。   
 这个Website Name 就是你需要再配置文件填入的内容   
-  
+
 参考资料，Hugo官方文档: [点击](https://gohugo.io/content-management/comments/)   
 
-   
 <!--more-->
 ## 二、配置Google Analytics
 先看配置改动 **[894ac5](https://github.com/Petrie/petrie.github.io/commit/894ac5007eb9aefb703a39086198f7f765c67b3d)**
