@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>hugo on Petrie's Site</title><link>https://petrie.github.io/categories/hugo/</link><description>Recent content in hugo on Petrie's Site</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Mon, 23 May 2022 20:44:24 +0800</lastBuildDate><atom:link href="https://petrie.github.io/categories/hugo/index.xml" rel="self" type="application/rss+xml"/><item><title>我的Hugo第一篇：评论、网站统计</title><link>https://petrie.github.io/2022/05/%E6%88%91%E7%9A%84hugo%E7%AC%AC%E4%B8%80%E7%AF%87%E8%AF%84%E8%AE%BA%E7%BD%91%E7%AB%99%E7%BB%9F%E8%AE%A1/</link><pubDate>Mon, 23 May 2022 20:44:24 +0800</pubDate><guid>https://petrie.github.io/2022/05/%E6%88%91%E7%9A%84hugo%E7%AC%AC%E4%B8%80%E7%AF%87%E8%AF%84%E8%AE%BA%E7%BD%91%E7%AB%99%E7%BB%9F%E8%AE%A1/</guid><description>&lt;h2 id="一支持评论">一、支持评论&lt;/h2>
+&lt;p>先看配置改动 &lt;strong>&lt;a href="https://github.com/Petrie/petrie.github.io/commit/9e9acc55a16677cc603b1610a8ce63dabfda3e9e">9e9acc&lt;/a>&lt;/strong>&lt;br>
+Disqus 的交互设计太傻X了。 &lt;br>
+如何正确获取你需要配置的内容，见下面的导引：&lt;br>
+&lt;a href="https://disqus.com/">首页&lt;/a>-&amp;gt;Get Start -&amp;gt; I want to install Disqus on my site -&amp;gt; Website Name。&lt;br>
+这个Website Name 就是你需要再配置文件填入的内容&lt;/p>
+&lt;p>参考资料，Hugo官方文档: &lt;a href="https://gohugo.io/content-management/comments/">点击&lt;/a>&lt;/p></description></item></channel></rss>
