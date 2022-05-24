@@ -4,7 +4,7 @@ title = "Petrie's Site"
 theme = "ananke"
 disqusShortname = "petrie"
 googleAnalytics = "G-T6WSQ8M692"
-DefaultContentLanguage = "zh-cn"
+DefaultContentLanguage = "zh"
 Paginate = 9
 
 [taxonomies]
