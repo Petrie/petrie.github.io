@@ -1,5 +1,11 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>vim on Petrie's Site</title><link>https://petrie.github.io/tags/vim/</link><description>Recent content in vim on Petrie's Site</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><atom:link href="https://petrie.github.io/tags/vim/index.xml" rel="self" type="application/rss+xml"/><item><title>Git文章发布方法</title><link>https://petrie.github.io/1/01/git%E6%96%87%E7%AB%A0%E5%8F%91%E5%B8%83%E6%96%B9%E6%B3%95/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/git%E6%96%87%E7%AB%A0%E5%8F%91%E5%B8%83%E6%96%B9%E6%B3%95/</guid><description> Git clone repo new post file Git add new file Git commit push</description></item><item><title>VIM 插件</title><link>https://petrie.github.io/1/01/vim-%E6%8F%92%E4%BB%B6/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/vim-%E6%8F%92%E4%BB%B6/</guid><description>NERDTree
-neocomplcache</description></item><item><title>vim 宏</title><link>https://petrie.github.io/1/01/vim-%E5%AE%8F/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/vim-%E5%AE%8F/</guid><description>##扯淡 用过Markdown的同学都应该知道，其换行语法为在行尾加两个空格。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>vim on Petrie's Site</title><link>https://petrie.github.io/tags/vim/</link><description>Recent content in vim on Petrie's Site</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Sat, 19 Sep 2015 10:26:12 +0000</lastBuildDate><atom:link href="https://petrie.github.io/tags/vim/index.xml" rel="self" type="application/rss+xml"/><item><title>VIM 插件</title><link>https://petrie.github.io/2015/09/vim-%E6%8F%92%E4%BB%B6/</link><pubDate>Sat, 19 Sep 2015 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2015/09/vim-%E6%8F%92%E4%BB%B6/</guid><description>NERDTree
+neocomplcache</description></item><item><title>Git文章发布方法</title><link>https://petrie.github.io/2014/05/git%E6%96%87%E7%AB%A0%E5%8F%91%E5%B8%83%E6%96%B9%E6%B3%95/</link><pubDate>Sat, 17 May 2014 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2014/05/git%E6%96%87%E7%AB%A0%E5%8F%91%E5%B8%83%E6%96%B9%E6%B3%95/</guid><description> Git clone repo new post file Git add new file Git commit push</description></item><item><title>Vim快速选中、删除、复制引号或括号中的内容</title><link>https://petrie.github.io/2014/03/vim%E5%BF%AB%E9%80%9F%E9%80%89%E4%B8%AD%E5%88%A0%E9%99%A4%E5%A4%8D%E5%88%B6%E5%BC%95%E5%8F%B7%E6%88%96%E6%8B%AC%E5%8F%B7%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9/</link><pubDate>Thu, 06 Mar 2014 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2014/03/vim%E5%BF%AB%E9%80%9F%E9%80%89%E4%B8%AD%E5%88%A0%E9%99%A4%E5%A4%8D%E5%88%B6%E5%BC%95%E5%8F%B7%E6%88%96%E6%8B%AC%E5%8F%B7%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9/</guid><description>http://www.Linuxsong.org/2010/09/vim-quick-select-copy-delete/</description></item><item><title>Vim 进阶1</title><link>https://petrie.github.io/2013/08/vim-%E8%BF%9B%E9%98%B61/</link><pubDate>Tue, 06 Aug 2013 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2013/08/vim-%E8%BF%9B%E9%98%B61/</guid><description>##Vim 进阶[1]##
+:g/pattern 寻找（移动）文件中最后一次出现pattern的地方。
+:g/pattern/p 寻找并显示文件中所有包含pattern的行
+:x 写入文件同时离开编辑器。只有文件被修改过时才会写入。
+:g/pattern/s/old/new/g这种语法让你搜索一个模式，在找到包含模式的某一行时，对另外一个字符做替换。
+vaw 选中当前单词
+vawp 选中当前单词并用寄存器中的覆盖</description></item><item><title>vim 宏</title><link>https://petrie.github.io/2012/03/vim-%E5%AE%8F/</link><pubDate>Tue, 06 Mar 2012 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2012/03/vim-%E5%AE%8F/</guid><description>##扯淡 用过Markdown的同学都应该知道，其换行语法为在行尾加两个空格。
 今天在用Markdown写东西的时候，需要从txt文件中黏贴大量文本。如果我想让其正常的显示换行，就需要在每一行的末尾加上两个空格。一行行添加，太麻烦了，很自然的想到了vim。
 利用vim中ctrl+v命令可以进行批量的修改。但是在操作的过程中我发现这个命令好像无法批量添加空格。没招了。
 下午的时候不忙，遂在群里提出了这个问题，力哥给了回复，利用vim的宏功能（教程）。
@@ -21,13 +27,7 @@ j #光标移至下一行
 到此，我需要录制的宏已经完成，接下来只需要重复执行这个宏就能实现我的需求。
 我这里需要执行4次，我只要输入4@a，便可将名为2的宏执行4次。其中@之前是次数，@之后是宏的名字。 是不是很简单。
 ##拾遗 普通人的编辑利器——Vim
-Vim的三种模式</description></item><item><title>Vim 进阶1</title><link>https://petrie.github.io/1/01/vim-%E8%BF%9B%E9%98%B61/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/vim-%E8%BF%9B%E9%98%B61/</guid><description>##Vim 进阶[1]##
-:g/pattern 寻找（移动）文件中最后一次出现pattern的地方。
-:g/pattern/p 寻找并显示文件中所有包含pattern的行
-:x 写入文件同时离开编辑器。只有文件被修改过时才会写入。
-:g/pattern/s/old/new/g这种语法让你搜索一个模式，在找到包含模式的某一行时，对另外一个字符做替换。
-vaw 选中当前单词
-vawp 选中当前单词并用寄存器中的覆盖</description></item><item><title>Vim快速选中、删除、复制引号或括号中的内容</title><link>https://petrie.github.io/1/01/vim%E5%BF%AB%E9%80%9F%E9%80%89%E4%B8%AD%E5%88%A0%E9%99%A4%E5%A4%8D%E5%88%B6%E5%BC%95%E5%8F%B7%E6%88%96%E6%8B%AC%E5%8F%B7%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/vim%E5%BF%AB%E9%80%9F%E9%80%89%E4%B8%AD%E5%88%A0%E9%99%A4%E5%A4%8D%E5%88%B6%E5%BC%95%E5%8F%B7%E6%88%96%E6%8B%AC%E5%8F%B7%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9/</guid><description>http://www.Linuxsong.org/2010/09/vim-quick-select-copy-delete/</description></item><item><title>易忘vim命令1</title><link>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</guid><description>%: **[括号匹配]**可以让光标从它当前所在的括号跳转到与它相匹配的括号上去 n+空格键 ： 那个n表示【数字】，例如20。按下数字后在按空格键盘，光标会向有一栋这一行的n个字符。例如20+空格 则光标会向后面移动20个字符距离。
+Vim的三种模式</description></item><item><title>易忘vim命令1</title><link>https://petrie.github.io/2012/03/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</link><pubDate>Tue, 06 Mar 2012 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2012/03/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</guid><description>%: **[括号匹配]**可以让光标从它当前所在的括号跳转到与它相匹配的括号上去 n+空格键 ： 那个n表示【数字】，例如20。按下数字后在按空格键盘，光标会向有一栋这一行的n个字符。例如20+空格 则光标会向后面移动20个字符距离。
 0：移动到这一行的最前面字符处
 $：移动到这一行的最后面字符处
 H：光标移动到这个屏幕最上方那一行的第一个字符
@@ -50,7 +50,7 @@ J：将光标所在列与下一列的数据结合成同一列。
 **c：重复删除多个数据，例如向下删除10行【10cj】**
 u：重复前一个动作。（常用）
 Ctrl+r：重做上一个动作。（常用）
-.：重复前一个动作，如果你想要重复删除，重复贴上等等动作。</description></item><item><title>易忘vim命令2</title><link>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A42/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A42/</guid><description>ZZ：这是大写的Z，若档案没有改动，则不储存离开，若档案已经被更动过，则存储后离开！
+.：重复前一个动作，如果你想要重复删除，重复贴上等等动作。</description></item><item><title>易忘vim命令2</title><link>https://petrie.github.io/2012/03/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A42/</link><pubDate>Tue, 06 Mar 2012 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2012/03/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A42/</guid><description>ZZ：这是大写的Z，若档案没有改动，则不储存离开，若档案已经被更动过，则存储后离开！
 ：w [filename] 将编辑的数据储存成另一个档案
 ：r [filename] 在编辑数据中，读入另一个档案的数据。
 ：n1，n2 w [filename] 将n1到n2的内容储存成filename这个档案

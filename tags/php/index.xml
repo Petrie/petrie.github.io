@@ -75,7 +75,7 @@ cnblogs面试题
 nginx 相关配置:nginx.conf
 fastcgi_connect_timeout 300; fastcgi_send_timeout 300; fastcgi_read_timeout 300; php-fpm相关配置:php-fpm.conf
 request_terminate_timeout = 10s php 相关配置:php.ini
-max_execution_time</description></item><item><title>CI 环境配置</title><link>https://petrie.github.io/1/01/ci-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/ci-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</guid><description>502 bad getway
+max_execution_time</description></item><item><title>CI 环境配置</title><link>https://petrie.github.io/2015/03/ci-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</link><pubDate>Thu, 05 Mar 2015 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2015/03/ci-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</guid><description>502 bad getway
 原因：php-cgi 没启动
 Your system folder path does not appear to be set correctly. Please open the following file and correct this: index.php
 原因：CI框架 system,application 路径配置错误</description></item></channel></rss>

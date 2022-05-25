@@ -2,10 +2,7 @@
 nginx 相关配置:nginx.conf
 fastcgi_connect_timeout 300; fastcgi_send_timeout 300; fastcgi_read_timeout 300; php-fpm相关配置:php-fpm.conf
 request_terminate_timeout = 10s php 相关配置:php.ini
-max_execution_time</description></item><item><title>Nginx 启动选项</title><link>https://petrie.github.io/1/01/nginx-%E5%90%AF%E5%8A%A8%E9%80%89%E9%A1%B9/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/nginx-%E5%90%AF%E5%8A%A8%E9%80%89%E9%A1%B9/</guid><description>Nginx 命令行参数和信号 选项 -c &amp;lt;/path/to/config&amp;gt; 为nginx指定一个配置文件，来代替缺省的
-t 不运行，而仅仅测试配置文件。nginx 将检查配置文件的语法的正确性，并尝试打开配置文件中所引用到的文件。
--v 显示nginx 的版本
--V 显示nginx 的版本，编译器版本和配置参数</description></item><item><title>Nginx配置PATHINFO</title><link>https://petrie.github.io/1/01/nginx%E9%85%8D%E7%BD%AEpathinfo/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/nginx%E9%85%8D%E7%BD%AEpathinfo/</guid><description>最近在学习php，《PHP和MySQL Web开发》零零碎碎的算是看完了，讲了一下基础的东西，对于入门是足够了。前几天开始些项目，是在先前别人的基础上写的，同时有事两个人一起写。完成之后看了看，代码太乱了，包括代码结构和命名规范。遂决定找点着方便的资料。
+max_execution_time</description></item><item><title>Nginx配置PATHINFO</title><link>https://petrie.github.io/2014/03/nginx%E9%85%8D%E7%BD%AEpathinfo/</link><pubDate>Thu, 06 Mar 2014 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2014/03/nginx%E9%85%8D%E7%BD%AEpathinfo/</guid><description>最近在学习php，《PHP和MySQL Web开发》零零碎碎的算是看完了，讲了一下基础的东西，对于入门是足够了。前几天开始些项目，是在先前别人的基础上写的，同时有事两个人一起写。完成之后看了看，代码太乱了，包括代码结构和命名规范。遂决定找点着方便的资料。
 在网上搜来搜去，找到了篇挺不错的PHP框架（ThinkPHP）教程：http://www.thinkphp.cn/info/155.html 着实还不错，推荐学习PHP的同学看看。
 这篇教程的默认环境是wamp的，由于我用的是Nginx，在学习第二篇的时候就遇到了问题。ThinkPHP支持的URL模式：PATHINFO Nginx默认配置是不支持的。本以为是自己ThinkPHP环境配置的问题，后来删了所有的相关文件（我的一贯作风&amp;ndash;屡试不爽），重新配置ThinkPHP环境，可是还是同样的报404错误。这样的话只能是Nginx和php配置的问题了。
 URL首先是通过Nginx解析的，先从Nginx下手。猜想Nginx是不是不支持ThinkPHP的PATHINFO呢。于是百度一下，便一目了然了。
@@ -28,4 +25,7 @@ set $path_info $2;
 } fastcgi_param SCRIPT_NAME $real_script_name;
 fastcgi_param PATH_INFO $path_info;
 }
-需要注意的是那个if判断语句，在(的前后都必须有空格，否则Nginx会报配置语法错误。</description></item></channel></rss>
+需要注意的是那个if判断语句，在(的前后都必须有空格，否则Nginx会报配置语法错误。</description></item><item><title>Nginx 启动选项</title><link>https://petrie.github.io/2012/03/nginx-%E5%90%AF%E5%8A%A8%E9%80%89%E9%A1%B9/</link><pubDate>Tue, 06 Mar 2012 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2012/03/nginx-%E5%90%AF%E5%8A%A8%E9%80%89%E9%A1%B9/</guid><description>Nginx 命令行参数和信号 选项 -c &amp;lt;/path/to/config&amp;gt; 为nginx指定一个配置文件，来代替缺省的
+t 不运行，而仅仅测试配置文件。nginx 将检查配置文件的语法的正确性，并尝试打开配置文件中所引用到的文件。
+-v 显示nginx 的版本
+-V 显示nginx 的版本，编译器版本和配置参数</description></item></channel></rss>

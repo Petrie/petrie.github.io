@@ -14,17 +14,13 @@ for((i=1;i&amp;lt;=10;i++));do echo $(expr $i \* 4);done for计数2
 for i in $(seq 10) for循环命令执行结果
 for i in `ls` 或者
 for i in $(ls) for循环数组变量
-arr=(1 2 3 4);for i in ${arr[@]};do echo $i;done;</description></item><item><title>CI 环境配置</title><link>https://petrie.github.io/1/01/ci-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/ci-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</guid><description>502 bad getway
+arr=(1 2 3 4);for i in ${arr[@]};do echo $i;done;</description></item><item><title>VIM 插件</title><link>https://petrie.github.io/2015/09/vim-%E6%8F%92%E4%BB%B6/</link><pubDate>Sat, 19 Sep 2015 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2015/09/vim-%E6%8F%92%E4%BB%B6/</guid><description>NERDTree
+neocomplcache</description></item><item><title>CI 环境配置</title><link>https://petrie.github.io/2015/03/ci-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</link><pubDate>Thu, 05 Mar 2015 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2015/03/ci-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</guid><description>502 bad getway
 原因：php-cgi 没启动
 Your system folder path does not appear to be set correctly. Please open the following file and correct this: index.php
-原因：CI框架 system,application 路径配置错误</description></item><item><title>Linux Svn Cmd</title><link>https://petrie.github.io/1/01/linux-svn-cmd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/linux-svn-cmd/</guid><description>svn diff [-r PREV] PATH 对比当前本地的工作拷贝文件(working copy)和任意版本A的差异
+原因：CI框架 system,application 路径配置错误</description></item><item><title>Linux Svn Cmd</title><link>https://petrie.github.io/2015/01/linux-svn-cmd/</link><pubDate>Fri, 30 Jan 2015 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2015/01/linux-svn-cmd/</guid><description>svn diff [-r PREV] PATH 对比当前本地的工作拷贝文件(working copy)和任意版本A的差异
 svn diff -r94239 对比任意历史版本A和任意历史版本B的差异
-svn diff -r94239:94127</description></item><item><title>Linux挂载ISO文件</title><link>https://petrie.github.io/1/01/linux%E6%8C%82%E8%BD%BDiso%E6%96%87%E4%BB%B6/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/linux%E6%8C%82%E8%BD%BDiso%E6%96%87%E4%BB%B6/</guid><description>Linux 下绑定ISO文件 在/mnt下创建/mnt/centos_iso文件夹
-mkdir /mnt/centos_iso
-将/home/cksamba/share/下的centos.iso挂在到/mnt/centos_iso文件夹下
-mount /home/cksamba/share/centos.iso /mnt/centos_iso -t iso9660 -o ro,loop=/dev/loop0
-或者
-mount /home/cksamba/share/centos.iso /mnt/centos_iso -o loop -t iso9660</description></item><item><title>Linux下搭建Samba服务器</title><link>https://petrie.github.io/1/01/linux%E4%B8%8B%E6%90%AD%E5%BB%BAsamba%E6%9C%8D%E5%8A%A1%E5%99%A8/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/linux%E4%B8%8B%E6%90%AD%E5%BB%BAsamba%E6%9C%8D%E5%8A%A1%E5%99%A8/</guid><description>##Linux下搭建Samba服务器##
+svn diff -r94239:94127</description></item><item><title>Vim快速选中、删除、复制引号或括号中的内容</title><link>https://petrie.github.io/2014/03/vim%E5%BF%AB%E9%80%9F%E9%80%89%E4%B8%AD%E5%88%A0%E9%99%A4%E5%A4%8D%E5%88%B6%E5%BC%95%E5%8F%B7%E6%88%96%E6%8B%AC%E5%8F%B7%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9/</link><pubDate>Thu, 06 Mar 2014 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2014/03/vim%E5%BF%AB%E9%80%9F%E9%80%89%E4%B8%AD%E5%88%A0%E9%99%A4%E5%A4%8D%E5%88%B6%E5%BC%95%E5%8F%B7%E6%88%96%E6%8B%AC%E5%8F%B7%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9/</guid><description>http://www.Linuxsong.org/2010/09/vim-quick-select-copy-delete/</description></item><item><title>Linux下搭建Samba服务器</title><link>https://petrie.github.io/2013/02/linux%E4%B8%8B%E6%90%AD%E5%BB%BAsamba%E6%9C%8D%E5%8A%A1%E5%99%A8/</link><pubDate>Wed, 06 Feb 2013 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2013/02/linux%E4%B8%8B%E6%90%AD%E5%BB%BAsamba%E6%9C%8D%E5%8A%A1%E5%99%A8/</guid><description>##Linux下搭建Samba服务器##
 安装文件
 三种方式获取安装文件
 1. 网络下载
@@ -37,14 +33,18 @@ mount /home/cksamba/share/centos.iso /mnt/centos_iso -o loop -t iso9660</descrip
 采用RPM方式安装。
 rpm -ivh samba_版本信息.rpm
 配置Samba
-配置文件位置: /etc/samba/smb.conf</description></item><item><title>LNMP环境搭建（一）安装前准备</title><link>https://petrie.github.io/1/01/lnmp%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%80%E5%AE%89%E8%A3%85%E5%89%8D%E5%87%86%E5%A4%87/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/lnmp%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%80%E5%AE%89%E8%A3%85%E5%89%8D%E5%87%86%E5%A4%87/</guid><description>博客后续将退出LNMP环境搭建系列博文：
+配置文件位置: /etc/samba/smb.conf</description></item><item><title>Linux挂载ISO文件</title><link>https://petrie.github.io/2012/03/linux%E6%8C%82%E8%BD%BDiso%E6%96%87%E4%BB%B6/</link><pubDate>Tue, 06 Mar 2012 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2012/03/linux%E6%8C%82%E8%BD%BDiso%E6%96%87%E4%BB%B6/</guid><description>Linux 下绑定ISO文件 在/mnt下创建/mnt/centos_iso文件夹
+mkdir /mnt/centos_iso
+将/home/cksamba/share/下的centos.iso挂在到/mnt/centos_iso文件夹下
+mount /home/cksamba/share/centos.iso /mnt/centos_iso -t iso9660 -o ro,loop=/dev/loop0
+或者
+mount /home/cksamba/share/centos.iso /mnt/centos_iso -o loop -t iso9660</description></item><item><title>LNMP环境搭建（一）安装前准备</title><link>https://petrie.github.io/2012/03/lnmp%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%80%E5%AE%89%E8%A3%85%E5%89%8D%E5%87%86%E5%A4%87/</link><pubDate>Tue, 06 Mar 2012 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2012/03/lnmp%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%80%E5%AE%89%E8%A3%85%E5%89%8D%E5%87%86%E5%A4%87/</guid><description>博客后续将退出LNMP环境搭建系列博文：
 安装依赖库： yum -y install gcc gcc-c++ autoconf libjpeg libjpeg-devel libpng libpng-devel freetype freetype-devel libxml2 libxml2-devel zlib zlib-devel glibc glibc-devel glib2 glib2-devel bzip2 bzip2-devel ncurses ncurses-devel curl curl-devel e2fsprogs e2fsprogs-devel krb5 krb5-devel libidn libidn-devel openssl openssl-devel openldap openldap-devel nss_ldap openldap-clients openldap-servers
 以上命令在连网下才能进行，如果不能联网需要配置本地yum源，配置方法请点击我以前的文章点击
-下载安装所需的源码包： PHP相关程序包 php源码包：点击 php依赖的libmcrypt加密库：点击 php依赖的mcrypt加密库：点击 php依赖的编码转换库：点击 php依赖的mhash库：点击 memcache源码包：点击 eaccelerator源码包：点击 PDO_MYSQL源码包：点击 ImageMagick源码包：点击 imagick源码包：点击 Nginx 相关程序包 Nginx源码包：点击 MySQL相关程序包 MySQL源码包：点击 本文旨在在张宴博客的基础上，使得安装过程更加清晰易懂，更加适合新手。</description></item><item><title>Tar in Linux</title><link>https://petrie.github.io/1/01/tar-in-linux/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/tar-in-linux/</guid><description>将当前文件夹下的所有以.jpg为后缀的文件打包到all.tar.gz 压缩包内:
+下载安装所需的源码包： PHP相关程序包 php源码包：点击 php依赖的libmcrypt加密库：点击 php依赖的mcrypt加密库：点击 php依赖的编码转换库：点击 php依赖的mhash库：点击 memcache源码包：点击 eaccelerator源码包：点击 PDO_MYSQL源码包：点击 ImageMagick源码包：点击 imagick源码包：点击 Nginx 相关程序包 Nginx源码包：点击 MySQL相关程序包 MySQL源码包：点击 本文旨在在张宴博客的基础上，使得安装过程更加清晰易懂，更加适合新手。</description></item><item><title>Tar in Linux</title><link>https://petrie.github.io/2012/03/tar-in-linux/</link><pubDate>Tue, 06 Mar 2012 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2012/03/tar-in-linux/</guid><description>将当前文件夹下的所有以.jpg为后缀的文件打包到all.tar.gz 压缩包内:
 tar -czvf all.tar.gz * .jpg
 将压缩文件all.tar.gz解压到文件夹dir下:
-tar -xzvf all.tar.gz -C dir</description></item><item><title>VIM 插件</title><link>https://petrie.github.io/1/01/vim-%E6%8F%92%E4%BB%B6/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/vim-%E6%8F%92%E4%BB%B6/</guid><description>NERDTree
-neocomplcache</description></item><item><title>Vim快速选中、删除、复制引号或括号中的内容</title><link>https://petrie.github.io/1/01/vim%E5%BF%AB%E9%80%9F%E9%80%89%E4%B8%AD%E5%88%A0%E9%99%A4%E5%A4%8D%E5%88%B6%E5%BC%95%E5%8F%B7%E6%88%96%E6%8B%AC%E5%8F%B7%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/vim%E5%BF%AB%E9%80%9F%E9%80%89%E4%B8%AD%E5%88%A0%E9%99%A4%E5%A4%8D%E5%88%B6%E5%BC%95%E5%8F%B7%E6%88%96%E6%8B%AC%E5%8F%B7%E4%B8%AD%E7%9A%84%E5%86%85%E5%AE%B9/</guid><description>http://www.Linuxsong.org/2010/09/vim-quick-select-copy-delete/</description></item><item><title>利用CentOS.ISO配置本地yum源</title><link>https://petrie.github.io/1/01/%E5%88%A9%E7%94%A8centos.iso%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/%E5%88%A9%E7%94%A8centos.iso%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90/</guid><description>#扯淡# 公司的网络要用代理，许多非常cool的东西都玩不了，真垃圾。
+tar -xzvf all.tar.gz -C dir</description></item><item><title>利用CentOS.ISO配置本地yum源</title><link>https://petrie.github.io/2012/03/%E5%88%A9%E7%94%A8centos.iso%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90/</link><pubDate>Tue, 06 Mar 2012 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2012/03/%E5%88%A9%E7%94%A8centos.iso%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0yum%E6%BA%90/</guid><description>#扯淡# 公司的网络要用代理，许多非常cool的东西都玩不了，真垃圾。
 组长让搞一个LNMP的教程。
 上次在开发机上乱搞，把LNMP搞乱了，程序不能运行，调了好久，最后只好请来别的组的一位大神才解决。谁让自己是LNMP菜鸟呢!组里也都是做.Net的
 从此我就不敢再在开发机上乱弄了。 （这事才几天，缓缓再说）。
@@ -74,7 +74,7 @@ baseurl=file:///mnt/
 enabled=1
 gpgcheck=0
 注意：步骤5 需要将/etc/yum.repos.d/下的文件清空，也就是说/etc/yum.repos.d/下只能有dvdiso.repo文件
-这就好了，执行 yum clean all;yum list,执行成功则说明配置成功了。 赶紧装个软件试试吧~ pretty cool！ huh~</description></item><item><title>易忘vim命令1</title><link>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</guid><description>%: **[括号匹配]**可以让光标从它当前所在的括号跳转到与它相匹配的括号上去 n+空格键 ： 那个n表示【数字】，例如20。按下数字后在按空格键盘，光标会向有一栋这一行的n个字符。例如20+空格 则光标会向后面移动20个字符距离。
+这就好了，执行 yum clean all;yum list,执行成功则说明配置成功了。 赶紧装个软件试试吧~ pretty cool！ huh~</description></item><item><title>易忘vim命令1</title><link>https://petrie.github.io/2012/03/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</link><pubDate>Tue, 06 Mar 2012 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2012/03/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A41/</guid><description>%: **[括号匹配]**可以让光标从它当前所在的括号跳转到与它相匹配的括号上去 n+空格键 ： 那个n表示【数字】，例如20。按下数字后在按空格键盘，光标会向有一栋这一行的n个字符。例如20+空格 则光标会向后面移动20个字符距离。
 0：移动到这一行的最前面字符处
 $：移动到这一行的最后面字符处
 H：光标移动到这个屏幕最上方那一行的第一个字符
@@ -97,7 +97,7 @@ J：将光标所在列与下一列的数据结合成同一列。
 **c：重复删除多个数据，例如向下删除10行【10cj】**
 u：重复前一个动作。（常用）
 Ctrl+r：重做上一个动作。（常用）
-.：重复前一个动作，如果你想要重复删除，重复贴上等等动作。</description></item><item><title>易忘vim命令2</title><link>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A42/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://petrie.github.io/1/01/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A42/</guid><description>ZZ：这是大写的Z，若档案没有改动，则不储存离开，若档案已经被更动过，则存储后离开！
+.：重复前一个动作，如果你想要重复删除，重复贴上等等动作。</description></item><item><title>易忘vim命令2</title><link>https://petrie.github.io/2012/03/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A42/</link><pubDate>Tue, 06 Mar 2012 10:26:12 +0000</pubDate><guid>https://petrie.github.io/2012/03/%E6%98%93%E5%BF%98vim%E5%91%BD%E4%BB%A42/</guid><description>ZZ：这是大写的Z，若档案没有改动，则不储存离开，若档案已经被更动过，则存储后离开！
 ：w [filename] 将编辑的数据储存成另一个档案
 ：r [filename] 在编辑数据中，读入另一个档案的数据。
 ：n1，n2 w [filename] 将n1到n2的内容储存成filename这个档案
