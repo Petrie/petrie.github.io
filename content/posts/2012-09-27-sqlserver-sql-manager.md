@@ -5,7 +5,8 @@ description: "SQLServer 远程登录"
 categories:
     - SQL Server
 tags: [SQL Server]  
-published: flase
+published: flase  
+date: 2012-03-06 10:26:12
 ---
  
 ------

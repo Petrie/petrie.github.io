@@ -5,6 +5,7 @@ description: "Git单步悔棋操作Git commit --amend 处女座的福音"
 categories:
     - Git
 tags: [Git]  
+date: 2016-06-22 10:26:12
 ---
 
 本篇要点

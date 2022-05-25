@@ -4,7 +4,8 @@ title: "Linux挂载ISO文件"
 description: "Linux挂载ISO文件"  
 categories:
     - Linux
-tags: [Linux,centos,mount,iso]  
+tags: [Linux,centos,mount,iso]    
+date: 2012-03-06 10:26:12
 ---  
 
 ## Linux 下绑定ISO文件 ##  

@@ -4,7 +4,8 @@ title: "字符编码故事的笔记"
 description: "字符编码故事的笔记(很久很久以前) "  
 categories:
     - other
-tags: [unicode, ascii, gbk, gb2312]  
+tags: [unicode, ascii, gbk, gb2312]    
+date: 2012-03-06 10:26:12
 ---
 ## 字符编码故事的笔记(很久很久以前) ##
 

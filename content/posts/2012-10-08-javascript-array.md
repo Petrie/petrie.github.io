@@ -4,7 +4,8 @@ title: "Array in Javascript"
 description: "Array in Javascript"  
 categories:
     - Javascript
-tags: [Javascript, array]  
+tags: [Javascript, array]    
+date: 2012-03-06 10:26:12
 ---
 
 - Javascript数组是无类型的：数组元素可以是任意类型，并且同一个数组中的不同元素也可能有不同的类型。  
