@@ -4,7 +4,8 @@ tags:
   - php
   - c
   - gdb
-category: php
+categories:
+    - php
 date: 2018-04-11 18:22:53
 featured_image: '/images/php.png'
 isCJKLanguage: true

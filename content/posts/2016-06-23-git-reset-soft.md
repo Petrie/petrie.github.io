@@ -2,7 +2,8 @@
 title: Git多步悔棋
 date: 2016-06-23 10:26:12
 description: Git commit --amend命令的延伸
-category: Git
+categories:
+    - Git
 tags: [Git]
 ---
 

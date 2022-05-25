@@ -2,7 +2,8 @@
 layout: post  
 title: "很久很久以前，字符编码的故事"  
 description: "很久很久以前，字符编码的故事"  
-category: 字符编码
+categories:
+    - 字符编码
 tags: [字符编码, ASCII, GB2312, GBK, DBCS, UNICODE, UTF-8, UTF-16]  
 ---
 

@@ -7,10 +7,6 @@ googleAnalytics = "G-T6WSQ8M692"
 DefaultContentLanguage = "zh"
 Paginate = 9
 
-[taxonomies]
-    tag = "tags"
-    category = "categories"
-
 [params]
     date_format = "2006年01月2日"
     body_classes = "baskerville bg-washed-yellow"

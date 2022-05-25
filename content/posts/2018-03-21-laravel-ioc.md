@@ -4,7 +4,8 @@ tags:
   - php
   - laravel
   - ioc
-category: laravel
+categories: 
+  - laravel
 date: 2018-03-21 05:55:12 
 featured_image: '/images/php.png'
 ---

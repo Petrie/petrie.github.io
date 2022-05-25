@@ -2,7 +2,8 @@
 layout: post  
 title: "vim 宏"  
 description: "vim 宏"  
-category: vim
+categories:
+    - vim
 tags: [vim]  
 ---
 ##**扯淡**

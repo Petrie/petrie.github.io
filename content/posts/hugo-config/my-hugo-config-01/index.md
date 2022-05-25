@@ -1,5 +1,5 @@
 ---
-title: "我的Hugo第一篇：评论、网站统计"
+title: "Hugo配置中级技巧(1)：评论、网站统计、日期、字数、时长"
 date: 2022-05-23T20:44:24+08:00
 tags :
     - "hugo"
@@ -7,7 +7,6 @@ tags :
 categories:
     - "hugo"
 isCJKLanguage: true
-hasMermaid: true
 featured_image: "./images/hugo_logo.png"
 ---
 

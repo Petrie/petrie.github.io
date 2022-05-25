@@ -3,7 +3,8 @@ title: PHP扩展开发－自动生成扩展骨架
 tags:
   - php
   - php-extension
-category: php
+categories:
+    - php
 date: 2018-03-29 03:55:12
 featured_image: '/images/php.png'
 isCJKLanguage: true

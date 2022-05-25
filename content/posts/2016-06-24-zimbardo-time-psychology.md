@@ -2,9 +2,9 @@
 title: 3分钟读完《津巴多时间心理学》
 date: 2016-06-24 10:17:05
 description: '3分钟读完系列'
-category: 3分钟读完系列
+categories:
+    - 读书笔记
 tags: 
-- 3分钟读完 
 - 时间管理
 - 心理学
 ---

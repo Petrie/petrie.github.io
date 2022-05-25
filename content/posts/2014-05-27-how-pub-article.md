@@ -2,7 +2,8 @@
 layout: post  
 title: "Git文章发布方法"  
 description: "Git文章发布方法"  
-category: Git
+categories:
+    - Git
 tags: [Git, vim]  
 ---
 

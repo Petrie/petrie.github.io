@@ -2,7 +2,8 @@
 layout: post  
 title: "Jekyll Install Troubleshooting"  
 description: "Jekyll Install Troubleshooting"  
-category: Jekyll
+categories:
+    - Jekyll
 tags: [Jekyll, Troubleshooting]  
 ---
 

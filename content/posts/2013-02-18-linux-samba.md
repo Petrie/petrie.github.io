@@ -2,7 +2,8 @@
 layout: post  
 title: "Linux下搭建Samba服务器"  
 description: "Linux下搭建Samba服务器"  
-category: Linux
+categories:
+    - Linux
 tags: [Linux, samba]
 ---
 ##Linux下搭建Samba服务器##

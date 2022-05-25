@@ -2,7 +2,8 @@
 layout: post  
 title: "利用CentOS.ISO配置本地yum源"  
 description: "将CentOS的dvdiso挂载到系统中，利用其中的rpm包配置yum源"  
-category: Linux
+categories:
+    - Linux
 tags: [Linux, centos, yum, iso, 本地yum]  
 ---  
 

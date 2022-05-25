@@ -2,7 +2,7 @@
 title: 个人成长
 date: 2016-08-23 14:05:11
 description:
-category: 
+categories: 
 - 个人成长
 tags:
 - 李笑来

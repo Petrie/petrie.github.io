@@ -7,7 +7,7 @@
           <ul class="category-list">
                {{ range $name, $items := .Site.Taxonomies.categories }}
               <span style="margin:30px">
-                 <a href="{{ "/tags/" | relLangURL }}{{ $name | urlize | lower  }}" style="font-size: 24.5px; color: #212121 ;">{{ $name }}</a>
+                 <a href="{{ "/categories/" | relLangURL }}{{ $name | urlize | lower  }}" style="font-size: 24.5px; color: #212121 ;">{{ $name }}</a>
                   <span class="tag-list-count"><sup>{{ len $items }}</sup></span>
              </span>
               {{ end }}

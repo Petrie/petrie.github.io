@@ -2,7 +2,8 @@
 layout: post  
 title: "Git单步悔棋操作"  
 description: "Git单步悔棋操作Git commit --amend 处女座的福音"  
-category: Git
+categories:
+    - Git
 tags: [Git]  
 ---
 

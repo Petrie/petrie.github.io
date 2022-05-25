@@ -2,7 +2,8 @@
 layout: post  
 title: "读书笔记-暗时间"  
 description: "暗时间 读书笔记 有很多可以学习借鉴的地方"  
-category: 读书笔记
+categories:
+    - 读书笔记
 tags: [暗时间, 读书笔记, 认知科学, 心理学]
 ---
 __程序员的永不过时__  

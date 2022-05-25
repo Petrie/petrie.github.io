@@ -2,7 +2,8 @@
 layout: post  
 title: "本质知识"  
 description: "本质知识"  
-category: 时间管理
+categories:
+    - 时间管理
 tags: [暗时间, 读书笔记, 认知科学, 心理学, 自私的基因]
 ---
 **本质知识**

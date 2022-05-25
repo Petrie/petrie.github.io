@@ -2,7 +2,7 @@
 layout: post  
 title: "VIM 插件"  
 description: "VIM 插件"  
-category: 
+categories:
 - vim 
 tags: [Linux, vim, plugin]  
 ---

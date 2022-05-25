@@ -2,7 +2,7 @@
 title: MySQL datetime vs timestamp
 date: 2016-07-23 13:03:01
 description:
-category:
+categories:
 - Mysql
 tags:
 - Mysql

@@ -3,7 +3,8 @@ title: PHP内存管理ZMM(一)－基本概念、数据结构和相关初始化�
 tags:
   - PHP
   - C
-category: PHP
+categories:
+    - PHP
 date: 2018-04-08 06:06:12
 featured_image: '/images/php.png'
 isCJKLanguage: true

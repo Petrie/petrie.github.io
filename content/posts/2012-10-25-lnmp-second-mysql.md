@@ -2,7 +2,8 @@
 layout: post  
 title: "LNMP环境搭建（二） 编译安装MySQL"  
 description: "LNMP环境搭建（二） 编译安装MySQL"  
-category: LNMP
+categories:
+    - LNMP
 tags: [LNMP, MySQL]  
 ---
 **编译安装MySQL**  
