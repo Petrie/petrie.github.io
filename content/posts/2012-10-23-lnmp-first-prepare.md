@@ -4,7 +4,8 @@ title: "LNMP环境搭建（一）安装前准备"
 description: "LNMP环境搭建（一） 安装前准备"  
 categories:
     - Linux
-tags: [Linux]  
+tags: [Linux]    
+date: 2012-03-06 10:26:12
 ---
 
 博客后续将退出LNMP环境搭建系列博文：

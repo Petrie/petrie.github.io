@@ -4,7 +4,8 @@ title: "vim 宏"
 description: "vim 宏"  
 categories:
     - vim
-tags: [vim]  
+tags: [vim]    
+date: 2012-03-06 10:26:12
 ---
 ##**扯淡**
 用过Markdown的同学都应该知道，其换行语法为在行尾加两个空格。  

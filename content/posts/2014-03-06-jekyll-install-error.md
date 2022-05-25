@@ -5,6 +5,7 @@ description: "Jekyll Install Troubleshooting"
 categories:
     - Jekyll
 tags: [Jekyll, Troubleshooting]  
+date: 2014-03-06 10:26:12  
 ---
 
 - 错误内容：

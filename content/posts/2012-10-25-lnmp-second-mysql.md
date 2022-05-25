@@ -4,7 +4,8 @@ title: "LNMP环境搭建（二） 编译安装MySQL"
 description: "LNMP环境搭建（二） 编译安装MySQL"  
 categories:
     - LNMP
-tags: [LNMP, MySQL]  
+tags: [LNMP, MySQL]    
+date: 2012-03-06 10:26:12
 ---
 **编译安装MySQL**  
 

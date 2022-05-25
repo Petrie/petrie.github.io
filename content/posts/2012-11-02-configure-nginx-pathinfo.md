@@ -4,7 +4,8 @@ title: "Nginx配置PATHINFO"
 description: "Nginx默认的配置是不支持PATHINFO的，今天遇到了这个问题，记录下解决方法"  
 categories:
     - Nginx
-tags: [Nginx, ThinkPHP, PATHINFO]
+tags: [Nginx, ThinkPHP, PATHINFO]  
+date: 2014-03-06 10:26:12
 ---
 
 最近在学习php，《PHP和MySQL

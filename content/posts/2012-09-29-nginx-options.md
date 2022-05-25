@@ -4,7 +4,8 @@ title: "Nginx 启动选项"
 description: "Nginx 启动选项"  
 categories:
     - Nginx
-tags: [Nginx,选项]  
+tags: [Nginx,选项]    
+date: 2012-03-06 10:26:12
 ---
 ## Nginx 命令行参数和信号 ##
 ###### 选项 ######

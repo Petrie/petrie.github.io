@@ -4,7 +4,8 @@ title: "Java Class 生命周期"
 description: "Java Class 生命周期"  
 categories:
     - Jvm
-tags: [Java, Class, Jvm]
+tags: [Java, Class, Jvm]  
+date: 2013-08-06 10:26:12
 ---
 
 

@@ -4,7 +4,8 @@ title: "Linux下搭建Samba服务器"
 description: "Linux下搭建Samba服务器"  
 categories:
     - Linux
-tags: [Linux, samba]
+tags: [Linux, samba]  
+date: 2013-02-06 10:26:12
 ---
 ##Linux下搭建Samba服务器##
 

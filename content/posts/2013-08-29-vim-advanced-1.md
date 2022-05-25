@@ -4,7 +4,8 @@ title: "Vim 进阶1 "
 description: "Vim 进阶1"  
 categories:
     - vim
-tags: [vim, vi, book]
+tags: [vim, vi, book]  
+date: 2013-08-06 10:26:12
 ---
 ##Vim 进阶[1]##
 

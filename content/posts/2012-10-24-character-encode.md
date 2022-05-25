@@ -4,7 +4,8 @@ title: "很久很久以前，字符编码的故事"
 description: "很久很久以前，字符编码的故事"  
 categories:
     - 字符编码
-tags: [字符编码, ASCII, GB2312, GBK, DBCS, UNICODE, UTF-8, UTF-16]  
+tags: [字符编码, ASCII, GB2312, GBK, DBCS, UNICODE, UTF-8, UTF-16]    
+date: 2012-03-06 10:26:12
 ---
 
 1. **Ascii码**————要从很久很久以前说起  
