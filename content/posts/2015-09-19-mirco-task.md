@@ -2,7 +2,8 @@
 layout: post  
 title: "微趴小任务"  
 description: "微趴小任务"  
-category: 微趴小任务
+categories:
+    - 微趴小任务
 tags: [微趴小任务]  
 ---
 

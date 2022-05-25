@@ -1,7 +1,8 @@
 ---
 title: 深入浅出'Git commit --amend'
 description: "深入浅出Git单步悔棋操作"
-category: Git
+categories:
+    - Git
 tags: [Git]
 ---
 

@@ -2,8 +2,8 @@
 title: Nignx+PHP中HTTP请求返回502
 date: 2016-06-28 19:38:18
 description:
-category:
-- troubleshooting 
+categories:
+- HTTP 
 tags:
 - nginx
 - php

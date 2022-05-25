@@ -4,7 +4,8 @@ date: 2018-04-11 10:22:53
 tags:
   - php
   - c
-category: php
+categories:
+    - php
 featured_image: '/images/php.png'
 isCJKLanguage: true
 ---

@@ -2,7 +2,8 @@
 layout: post  
 title: "Nginx 启动选项"  
 description: "Nginx 启动选项"  
-category: Nginx
+categories:
+    - Nginx
 tags: [Nginx,选项]  
 ---
 ## Nginx 命令行参数和信号 ##

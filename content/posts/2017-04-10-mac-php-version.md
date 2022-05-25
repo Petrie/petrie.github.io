@@ -2,7 +2,8 @@
 title: 更新Mac的PHP默认版本
 date: 2017-04-10 01:07:38
 tags: [mac, php, brew]
-category: php
+categories:
+    - php
  
 ---
 

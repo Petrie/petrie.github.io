@@ -1,7 +1,8 @@
 ---
 title: PHP设置连接mysql超时时间
 date: 2017-06-04 20:55:12
-category: php
+categories:
+    - php
 tags: [php ,mysql]
 featured_image: '/images/php.png'
 ---

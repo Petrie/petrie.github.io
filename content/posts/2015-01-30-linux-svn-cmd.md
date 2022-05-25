@@ -2,7 +2,7 @@
 layout: post  
 title: "Linux Svn Cmd"  
 description: "Linux Svn常用命令"  
-category: 
+categories:
 - svn 
 tags: [Linux, svn]  
 ---

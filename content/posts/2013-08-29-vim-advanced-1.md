@@ -2,7 +2,8 @@
 layout: post  
 title: "Vim 进阶1 "  
 description: "Vim 进阶1"  
-category: vim
+categories:
+    - vim
 tags: [vim, vi, book]
 ---
 ##Vim 进阶[1]##

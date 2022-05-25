@@ -3,7 +3,8 @@ title: PHP内存管理ZMM（二）－常见宏的值
 tags:
   - php
   - C
-category: php
+categories:
+    - php
 date: 2018-04-09 14:22:25
 featured_image: '/images/php.png'
 isCJKLanguage: true

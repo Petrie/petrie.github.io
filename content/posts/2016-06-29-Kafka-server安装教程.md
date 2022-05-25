@@ -2,7 +2,7 @@
 title: Kafka server安装教程
 date: 2016-06-29 00:01:13
 description:
-category:
+categories:
 - 消息队列
 tags:
 - kafka

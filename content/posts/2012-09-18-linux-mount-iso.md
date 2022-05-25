@@ -2,7 +2,8 @@
 layout: post  
 title: "Linux挂载ISO文件"  
 description: "Linux挂载ISO文件"  
-category: Linux
+categories:
+    - Linux
 tags: [Linux,centos,mount,iso]  
 ---  
 

@@ -1,6 +1,6 @@
 ---
 title: Mac下“.bashrc”不生效
-category:
+categories:
   - Linux
 tags:
   - Linux

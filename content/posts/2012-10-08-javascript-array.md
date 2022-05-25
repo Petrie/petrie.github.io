@@ -2,7 +2,8 @@
 layout: post  
 title: "Array in Javascript"  
 description: "Array in Javascript"  
-category: Javascript
+categories:
+    - Javascript
 tags: [Javascript, array]  
 ---
 
