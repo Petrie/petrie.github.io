@@ -12,7 +12,7 @@ typedef struct _zend_mm_block_info {
    size_t _size;
    size_t _prev;
 } zend_mm_block_info;
-"><meta name=generator content="Hugo 0.111.3"><meta name=robots content="noindex, nofollow"><link rel=stylesheet href=/ananke/css/main.min.css><meta property="og:title" content="PHP内存管理ZMM(一)－基本概念、数据结构和相关初始化函数"><meta property="og:description" content="基本概念
+"><meta name=generator content="Hugo 0.110.0"><meta name=robots content="noindex, nofollow"><link rel=stylesheet href=/ananke/css/main.min.css><meta property="og:title" content="PHP内存管理ZMM(一)－基本概念、数据结构和相关初始化函数"><meta property="og:description" content="基本概念
 
 如上图所示，中间部分的zend memory manage由接口层、heap层、存储层(storage)组成。内存管理的主要逻辑在heap层中，后续主要讲解相关的数据结构和函数流程。
 基本数据结构
@@ -165,7 +165,7 @@ st-&gt;startzmm-&gt;alloc_globals_ctor-&gt;zend_mm_startup-&gt;zend_mm_startup_e
 </span></span><span style=display:flex><span>	   (zend_mm_free_block<span style=color:#f92672>*</span>) ((<span style=color:#66d9ef>char</span><span style=color:#f92672>*</span>)<span style=color:#f92672>&amp;</span>heap<span style=color:#f92672>-&gt;</span>free_buckets[<span style=color:#ae81ff>3</span> <span style=color:#f92672>*</span> <span style=color:#ae81ff>2</span>] <span style=color:#f92672>+</span> \
 </span></span><span style=display:flex><span>     	<span style=color:#ae81ff>8</span> <span style=color:#f92672>*</span> <span style=color:#ae81ff>2</span> <span style=color:#f92672>-</span> \
 </span></span><span style=display:flex><span>	    <span style=color:#ae81ff>32</span>)
-</span></span></code></pre></div><p>计算后的最终值为 <code>(zend_mm_free_block*) ((char*)&amp;heap->free_buckets[3 * 2] -16)</code>，这里假设<code>&amp;heap->free_buckets[3 * 2]</code>的值为<code>0xe89028</code>,那么<code>(char*)&amp;heap->free_buckets[3 * 2] -16</code>的值为<code>0xe89018</code>，所以宏ZEND_MM_SMALL_FREE_BUCKET的返回值就为 <code>(zend_mm_free_block*)0xe89018</code>，这个值也是<code>heap->free_buckets[2 * 2]</code>的地址，注意，这并不是巧合。宏ZEND_MM_SMALL_FREE_BUCKET返回后的代码逻辑如下：</p><pre tabindex=0><code>...
+</span></span></code></pre></div><p>计算后的最终值为 <code>(zend_mm_free_block*) ((char*)&heap->free_buckets[3 * 2] -16)</code>，这里假设<code>&heap->free_buckets[3 * 2]</code>的值为<code>0xe89028</code>,那么<code>(char*)&heap->free_buckets[3 * 2] -16</code>的值为<code>0xe89018</code>，所以宏ZEND_MM_SMALL_FREE_BUCKET的返回值就为 <code>(zend_mm_free_block*)0xe89018</code>，这个值也是<code>heap->free_buckets[2 * 2]</code>的地址，注意，这并不是巧合。宏ZEND_MM_SMALL_FREE_BUCKET返回后的代码逻辑如下：</p><pre tabindex=0><code>...
 p = ZEND_MM_SMALL_FREE_BUCKET(heap, 0);
 for (i = 0; i &lt; ZEND_MM_NUM_BUCKETS; i++) {
    p-&gt;next_free_block = p;

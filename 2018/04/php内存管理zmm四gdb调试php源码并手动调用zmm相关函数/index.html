@@ -4,7 +4,7 @@ _zend_mm_alloc_int
 zend_mm_search_large_block
 
 为什么要手动调用函数
-在阅读PHP ZMM源码的时候，有许多复杂的逻辑仅仅通过阅读源码很难理解，比如大内存large_free_buckets结构的构造。同构手动调用函数，可以方便的执行要申请的内存大小，从而测试构造large_free_buckets结构"><meta name=generator content="Hugo 0.111.3"><meta name=robots content="noindex, nofollow"><link rel=stylesheet href=/ananke/css/main.min.css><meta property="og:title" content="PHP内存管理ZMM（四）－GDB调试php源码并手动调用ZMM相关函数"><meta property="og:description" content="本章讲介绍gdb调试php，并手动调用ZMM中申请内存和查找大内存块的函数
+在阅读PHP ZMM源码的时候，有许多复杂的逻辑仅仅通过阅读源码很难理解，比如大内存large_free_buckets结构的构造。同构手动调用函数，可以方便的执行要申请的内存大小，从而测试构造large_free_buckets结构"><meta name=generator content="Hugo 0.110.0"><meta name=robots content="noindex, nofollow"><link rel=stylesheet href=/ananke/css/main.min.css><meta property="og:title" content="PHP内存管理ZMM（四）－GDB调试php源码并手动调用ZMM相关函数"><meta property="og:description" content="本章讲介绍gdb调试php，并手动调用ZMM中申请内存和查找大内存块的函数
 
 _zend_mm_alloc_int
 zend_mm_search_large_block
