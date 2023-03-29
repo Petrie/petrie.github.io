@@ -5,4 +5,6 @@ timestamp timestamp通常用来追踪数据记录的变化时间，通常它被�
 它以UTC时间格式存储 可以由Mysql自动初始化和更新 可存储范围 1970-01-01 00:00:01 UTC to 2038-01-19 03:14:07 UTC datetime datetime字段可以很方便的通过SELECT UNIX_TIMESTAMP(my_datetime) 转换为Linux 时间戳。
 它具有以下特点
 存储内容，所存即所得 可存储范围1000-01-01 00:00:00 to 9999-12-31 23:59:59 可以指定日和月字段为0值 某些情况下可以设置默认值now()。但是此种方式并不推荐 以上 实践一
-CREATE TABLE ts ( id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL, created_at DATETIME , changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ); 实践一的优点</description></item></channel></rss>
+CREATE TABLE ts ( id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL, created_at DATETIME , changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ); 实践一的优点
+1.数据库相关操作不需要关心changed_at字段的更新，MySQL会自动在数据变动的时候将此字段自动更新为当前时间
+(the end)</description></item></channel></rss>

@@ -24,4 +24,8 @@ make &amp;amp;&amp;amp; make install
 5. 将安装目录极其子目录的所属组和拥有者设置为Mysql:Mysql
 chown -R Mysql:Mysql /usr/local/Mysql
 cd ..
-6. 以Mysql用户帐号的身份建立数据表</description></item></channel></rss>
+6. 以Mysql用户帐号的身份建立数据表
+cd /usr/local/Mysql ./scripts/Mysql_install_db &amp;ndash;basedir=/usr/local/Mysql &amp;ndash;datadir=/usr/local/Mysql/data &amp;ndash;user=Mysql
+如果执行成功会出来一堆提示信息。
+现在你已经成功安装了MySQL。你可以用如下命令启动MySQL：
+./support-files/Mysql.server start</description></item></channel></rss>
