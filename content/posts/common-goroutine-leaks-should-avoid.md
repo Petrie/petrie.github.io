@@ -1,7 +1,7 @@
 ---
 title: "【译】如何避免协程泄漏"
 date: 2023-05-05T11:46:21+08:00
-draft: true
+draft: false
 isCJKLanguage: true
 tags :
     - "go"
