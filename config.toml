@@ -9,7 +9,6 @@ Paginate = 9
 
 [params]
     date_format = "2006年01月2日"
-    body_classes = "baskerville bg-washed-yellow"
     recent_posts_number = 6
     cover_dimming_class = ""
     show_reading_time = true
@@ -21,3 +20,19 @@ Paginate = 9
 
 [permalinks]
     posts = '/:year/:month/:title/'
+
+[markup]
+  [markup.highlight]
+    anchorLineNos = true
+    codeFences = true
+    guessSyntax = false
+    hl_Lines = ''
+    hl_inline = false
+    lineAnchors = ''
+    lineNoStart = 1
+    lineNos = true
+    lineNumbersInTable = true
+    noClasses = true
+    noHl = false
+    style = 'github'
+    tabWidth = 4
