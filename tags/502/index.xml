@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>502 on Petrie's Site</title><link>https://petrie.github.io/tags/502/</link><description>Recent content in 502 on Petrie's Site</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><lastBuildDate>Tue, 28 Jun 2016 19:38:18 +0000</lastBuildDate><atom:link href="https://petrie.github.io/tags/502/index.xml" rel="self" type="application/rss+xml"/><item><title>Nignx+PHP中HTTP请求返回502</title><link>https://petrie.github.io/2016/06/nignx-php%E4%B8%ADhttp%E8%AF%B7%E6%B1%82%E8%BF%94%E5%9B%9E502/</link><pubDate>Tue, 28 Jun 2016 19:38:18 +0000</pubDate><guid>https://petrie.github.io/2016/06/nignx-php%E4%B8%ADhttp%E8%AF%B7%E6%B1%82%E8%BF%94%E5%9B%9E502/</guid><description>Nginx + PHP-FPM 报 502 错误，我想大部分 RD 都遇到过吧。根据报错的频率，可以分为两种情况，间歇性的502和连续性的502。间歇性502，是后端 PHP-FPM 不可用造成的，间歇性的502一般认为是由于 PHP-FPM 进程重启造成的。连续性502很可能是由于cgi处理时间过长导致超时所致。下面讨论超时相关的参数：
 nginx 相关配置:nginx.conf
-fastcgi_connect_timeout 300; fastcgi_send_timeout 300; fastcgi_read_timeout 300; php-fpm相关配置:php-fpm.conf
-request_terminate_timeout = 10s php 相关配置:php.ini
-max_execution_time</description></item></channel></rss>
+1 2 3 fastcgi_connect_timeout 300; fastcgi_send_timeout 300; fastcgi_read_timeout 300; php-fpm相关配置:php-fpm.conf
+1 request_terminate_timeout = 10s php 相关配置:php.ini
+1 max_execution_time</description></item></channel></rss>
